@@ -6,10 +6,11 @@ module.exports = class ReadyEvent extends BaseEvent {
   }
 
   run(client) {
+    const owner = client.getOwner()
     setInterval(function () {
-      client.user.setActivity('Bot Online', {
+      client.user.setActivity(client.prefix + 'help | By ' + owner.tag, {
         type: 'LISTENING',
       })
-    }, 900000)
+    }, 0)
   }
 }
