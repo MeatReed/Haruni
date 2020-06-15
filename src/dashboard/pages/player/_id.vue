@@ -127,9 +127,20 @@
       </v-card>
     </v-dialog>
     <v-btn
+      :color="$vuetify.theme.dark ? 'black' : 'white'"
       bottom
+      fab
+      fixed
+      left
+      @click="$vuetify.theme.dark = $vuetify.theme.dark ? false : true"
+    >
+      <v-icon :color="$vuetify.theme.dark ? 'white' : 'black'"
+        >mdi-white-balance-sunny</v-icon
+      >
+    </v-btn>
+    <v-btn
       color="primary"
-      dark
+      bottom
       fab
       fixed
       right

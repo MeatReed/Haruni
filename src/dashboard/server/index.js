@@ -33,7 +33,7 @@ module.exports = async (client) => {
         clientID: process.env.BOT_ID,
         clientSecret: process.env.OAUTHSECRET,
         callbackURL: process.env.CALLBACKURL,
-        scope: ['identify', 'guilds']
+        scope: ['identify', 'guilds'],
       },
       (accessToken, refreshToken, profile, done) => {
         process.nextTick(() => done(null, profile))
@@ -44,11 +44,11 @@ module.exports = async (client) => {
   app.use(
     session({
       store: new MemoryStore({
-        checkPeriod: 99999999
+        checkPeriod: 99999999,
       }),
       secret: process.env.APP_SECRET,
       resave: false,
-      saveUninitialized: false
+      saveUninitialized: false,
     })
   )
 
@@ -58,7 +58,7 @@ module.exports = async (client) => {
   app.use(bodyParser.json())
   app.use(
     bodyParser.urlencoded({
-      extended: false
+      extended: false,
     })
   )
 
