@@ -53,7 +53,7 @@
         >
         <v-btn v-if="player" color="success" @click="skip">Skip</v-btn>
         <v-btn v-if="player" color="success" @click="stop">Stop</v-btn>
-        <v-menu offset-y>
+        <v-menu v-if="player" offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-btn small fab v-bind="attrs" v-on="on">
               <v-icon dark>mdi-volume-high</v-icon>
@@ -79,7 +79,7 @@
       </v-col>
     </v-row>
     <div class="text-center ma-2">
-      <v-snackbar v-model="snackbar" :color="snackbarColor" right>
+      <v-snackbar v-model="snackbar" :color="snackbarColor" right top>
         {{ snackbarText }}
       </v-snackbar>
     </div>
@@ -108,6 +108,35 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogAddMusic" width="500">
+      <v-card>
+        <v-card-title>
+          Add a music
+        </v-card-title>
+
+        <v-card-text></v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialogAddMusic = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-btn
+      bottom
+      color="primary"
+      dark
+      fab
+      fixed
+      right
+      @click="dialogAddMusic = true"
+    >
+      <v-icon>mdi-plus</v-icon>
+    </v-btn>
   </v-container>
 </template>
 
@@ -159,6 +188,7 @@ export default {
       queueTable: null,
       dialogMusic: false,
       selectMusic: null,
+      dialogAddMusic: false,
     }
   },
   watch: {
