@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/bot.js NODE_ENV=development",
-    "start": "node ./src/bot.js NODE_ENV=production",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+    "dev": "nodemon ./src/bot.js",
+    "start": "node ./src/bot.js",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
+    "nuxt:build": "nuxt build ./src/dashboard"
   },
   "keywords": [],
   "author": "",
