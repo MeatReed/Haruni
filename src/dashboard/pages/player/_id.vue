@@ -3,7 +3,6 @@
     <v-row>
       <v-col>
         <h2>
-
           {{
             player && player.queue[0]
               ? player.queue[0].title
@@ -54,10 +53,16 @@
         >
         <v-btn v-if="player" color="success" @click="skip">Skip</v-btn>
         <v-btn v-if="player" color="success" @click="stop">Stop</v-btn>
-        <v-btn small fab @click.stop="showVolumeSlide = !showVolumeSlide">
-          <v-icon dark>mdi-volume-high</v-icon>
-        </v-btn>
-        <v-slider v-if="showVolumeSlide" v-model="volume" vertical></v-slider>
+        <v-menu offset-y>
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn small fab v-bind="attrs" v-on="on">
+              <v-icon dark>mdi-volume-high</v-icon>
+            </v-btn>
+          </template>
+          <v-card>
+            <v-slider v-model="volume" vertical />
+          </v-card>
+        </v-menu>
       </v-col>
     </v-row>
     <v-row v-if="player">
@@ -166,7 +171,7 @@ export default {
         })
         .then((res) => {
           if (res) {
-            this.snackbarText = 'Seek'
+            this.snackbarText = `Volume ${value}%`
             this.snackbarColor = 'success'
             this.snackbar = true
           }
