@@ -124,7 +124,6 @@ module.exports = class PlayCommand extends BaseCommand {
               message.channel,
               'Une erreur est survenue : \n```JS\n' + err.message + '```'
             )
-            console.log(err)
           }
         })
     }

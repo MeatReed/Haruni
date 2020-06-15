@@ -8,9 +8,9 @@ module.exports = class BaseCommand {
     guildOnly = false,
     nsfw = false,
     ownerOnly = false,
-    aliases = new Array(),
-    userPermissions = new Array(),
-    clientPermissions = new Array(),
+    aliases = [],
+    userPermissions = [],
+    clientPermissions = [],
   }) {
     this.name = name
     this.description = description
