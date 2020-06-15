@@ -21,11 +21,11 @@ module.exports = class PlayCommand extends BaseCommand {
     const query = args.join(' ')
 
     if (!message.member.voice.channel) {
-      client.InfoEmbed(channel, 'Please join a vocal channel!')
+      client.InfoEmbed(message.channel, 'Please join a vocal channel!')
       return
     } else if (!query) {
       client.InfoEmbed(
-        channel,
+        message.channel,
         'You forgot to put the link or the name of the video!'
       )
       return
