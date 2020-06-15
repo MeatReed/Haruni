@@ -3,8 +3,9 @@
     <v-row>
       <v-col>
         <h2>
+
           {{
-            player
+            player && player.queue[0]
               ? player.queue[0].title
                 ? player.queue[0].title
                 : 'Wait for..'
@@ -18,7 +19,7 @@
           :disabled="player"
           @change="seekPlayer"
         ></v-progress-linear>
-        <v-chip v-if="player" class="ma-1">
+        <v-chip v-if="player && player.queue[0]" class="ma-1">
           Author: {{ player.queue[0].author }}
         </v-chip>
         <v-chip v-if="player" class="ma-1">
@@ -27,14 +28,14 @@
         <v-chip v-if="player" class="ma-1">
           Text Channel: #{{ player.options.textChannel.name }}
         </v-chip>
-        <v-chip v-if="player" class="ma-1">
+        <v-chip v-if="player && player.queue[0]" class="ma-1">
           Requested by: {{ player.queue[0].user.tag }}
         </v-chip>
       </v-col>
     </v-row>
     <v-row class="text-center">
       <v-col>
-        <p v-if="player">
+        <p v-if="player && player.queue[0]">
           {{ duration(player.position).minutes() }}:{{
             duration(player.position).seconds()
           }}/{{ duration(player.queue[0].length).minutes() }}:{{

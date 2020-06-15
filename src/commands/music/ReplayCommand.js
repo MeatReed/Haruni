@@ -5,8 +5,8 @@ module.exports = class ReplayCommand extends BaseCommand {
     super({
       name: 'replay',
       description: '',
-      category: 'replay',
-      usage: 'stop',
+      category: 'music',
+      usage: 'replay',
       enabled: true,
       guildOnly: true,
       nsfw: false,

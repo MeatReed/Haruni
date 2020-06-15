@@ -1,9 +1,9 @@
 require('dotenv').config()
+const moment = require('moment')
+const { LavaClient } = require('@anonymousg/lavajs')
 const { Client } = require('discord.js')
 const { registerCommands, registerEvents } = require('./utils/registry')
 const client = new Client()
-const { LavaClient } = require('@anonymousg/lavajs')
-const moment = require('moment')
 
 const nodes = [
   {
@@ -64,6 +64,7 @@ const nodes = [
   client.prefix = process.env.DISCORD_BOT_PREFIX
   client.ownerID = process.env.DISCORD_BOT_OWNER
   require('./utils/messages')(client)
+  require('./utils/functions')(client)
   require('./dashboard/server')(client)
   await registerCommands(client, '../commands')
   await registerEvents(client, '../events')
