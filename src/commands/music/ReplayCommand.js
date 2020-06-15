@@ -50,7 +50,6 @@ module.exports = class ReplayCommand extends BaseCommand {
           message.channel,
           'An error has occurred : \n```JS\n' + error.message + '```'
         )
-        return
       }
     }
   }

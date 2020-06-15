@@ -17,7 +17,7 @@ module.exports = class ResumeCommand extends BaseCommand {
     })
   }
 
-  async run(client, message, args) {
+  run(client, message, args) {
     if (!message.member.voice.channel) {
       client.InfoEmbed(message.channel, 'Please join a vocal channel!')
       return
@@ -35,15 +35,18 @@ module.exports = class ResumeCommand extends BaseCommand {
       return
     }
     try {
-      player.resume()
-      client.SuccessEmbed(message.channel, 'The music has been resumed.')
+      if (player.playPaused === true) {
+        player.resume()
+        client.SuccessEmbed(message.channel, 'The music has been resumed.')
+      } else {
+        client.ErrorEmbed(message.channel, 'The music is already being played!')
+      }
     } catch (error) {
       if (error) {
         client.ErrorEmbed(
           message.channel,
           'An error has occurred : \n```JS\n' + error.message + '```'
         )
-        return
       }
     }
   }

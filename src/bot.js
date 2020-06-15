@@ -1,5 +1,5 @@
 require('dotenv').config()
-const { Client, Message } = require('discord.js')
+const { Client } = require('discord.js')
 const { registerCommands, registerEvents } = require('./utils/registry')
 const client = new Client()
 const { LavaClient } = require('@anonymousg/lavajs')
@@ -17,23 +17,17 @@ const nodes = [
   setTimeout(() => {
     client.lavaClient = new LavaClient(client, nodes)
       .on('queueOver', (player) => {
-        player.playing = false
-        const guild = client.guilds.cache.get(player.options.guild.id)
-        const channel = guild.channels.cache.get(player.options.textChannel.id)
-        client.InfoEmbed(channel, 'No more music in the queue.')
+        client.InfoEmbed(
+          player.options.textChannel,
+          'No more music in the queue.'
+        )
         player.destroy()
       })
-      .on('trackOver', (player) => {
-        player.playing = false
-      })
       .on('trackPlay', (track, player) => {
-        player.playing = true
-        const guild = client.guilds.cache.get(player.options.guild.id)
-        const channel = guild.channels.cache.get(player.options.textChannel.id)
         const duration = moment.duration({
           ms: player.queue[0].length,
         })
-        channel.send({
+        player.options.textChannel.send({
           embed: {
             description: `Playing : [${player.queue[0].title}](${player.queue[0].uri}) !`,
             color: 16711717,
@@ -70,6 +64,7 @@ const nodes = [
   client.prefix = process.env.DISCORD_BOT_PREFIX
   client.ownerID = process.env.DISCORD_BOT_OWNER
   require('./utils/messages')(client)
+  require('./dashboard/server')(client)
   await registerCommands(client, '../commands')
   await registerEvents(client, '../events')
   await client.login(process.env.DISCORD_BOT_TOKEN)

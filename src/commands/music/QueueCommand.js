@@ -1,6 +1,6 @@
-const BaseCommand = require('../../utils/structures/BaseCommand')
 const Discord = require('discord.js')
 const Pagination = require('discord-paginationembed')
+const BaseCommand = require('../../utils/structures/BaseCommand')
 
 module.exports = class QueueCommand extends BaseCommand {
   constructor() {
@@ -19,7 +19,7 @@ module.exports = class QueueCommand extends BaseCommand {
     })
   }
 
-  async run(client, message, args) {
+  run(client, message, args) {
     if (!message.member.voice.channel) {
       client.InfoEmbed(message.channel, 'Please join a vocal channel!')
       return

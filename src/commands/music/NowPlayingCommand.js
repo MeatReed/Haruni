@@ -1,5 +1,5 @@
-const BaseCommand = require('../../utils/structures/BaseCommand')
 const moment = require('moment')
+const BaseCommand = require('../../utils/structures/BaseCommand')
 
 module.exports = class NowPlayingCommand extends BaseCommand {
   constructor() {
@@ -18,7 +18,7 @@ module.exports = class NowPlayingCommand extends BaseCommand {
     })
   }
 
-  async run(client, message, args) {
+  run(client, message, args) {
     if (!message.member.voice.channel) {
       client.InfoEmbed(message.channel, 'Please join a vocal channel!')
       return
@@ -39,7 +39,7 @@ module.exports = class NowPlayingCommand extends BaseCommand {
       ms: player.queue[0].length,
     })
     const progression = moment.duration({ ms: player.position * 1000 })
-    let progressBar = [
+    const progressBar = [
       '▬',
       '▬',
       '▬',

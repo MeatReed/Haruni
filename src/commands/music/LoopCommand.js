@@ -17,7 +17,7 @@ module.exports = class LoopCommand extends BaseCommand {
     })
   }
 
-  async run(client, message, args) {
+  run(client, message, args) {
     if (!message.member.voice.channel) {
       client.InfoEmbed(message.channel, 'Please join a vocal channel!')
       return

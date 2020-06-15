@@ -1,5 +1,5 @@
 module.exports = (client) => {
-  client.InfoEmbed = async (channel, msg) => {
+  client.InfoEmbed = (channel, msg) => {
     return channel.send({
       embed: {
         description: msg,
@@ -8,7 +8,7 @@ module.exports = (client) => {
     })
   }
 
-  client.SuccessEmbed = async (channel, msg) => {
+  client.SuccessEmbed = (channel, msg) => {
     return channel.send({
       embed: {
         description: msg,
@@ -17,7 +17,7 @@ module.exports = (client) => {
     })
   }
 
-  client.ErrorEmbed = async (channel, msg) => {
+  client.ErrorEmbed = (channel, msg) => {
     return channel.send({
       embed: {
         description: msg,
