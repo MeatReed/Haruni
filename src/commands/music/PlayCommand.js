@@ -1,4 +1,5 @@
 const BaseCommand = require('../../utils/structures/BaseCommand')
+const moment = require('moment')
 
 module.exports = class PlayCommand extends BaseCommand {
   constructor() {
@@ -67,6 +68,9 @@ module.exports = class PlayCommand extends BaseCommand {
       player.play()
     } else {
       if (!search.tracks) {
+        const duration = moment.duration({
+          ms: player.queue[0].length,
+        })
         message.channel.send({
           embed: {
             description: `Adding music [${search.title}](${search.uri}) !`,
@@ -83,6 +87,10 @@ module.exports = class PlayCommand extends BaseCommand {
               {
                 name: 'Requested by',
                 value: search.user.tag,
+              },
+              {
+                name: 'Duration',
+                value: `${duration.minutes()}:${duration.seconds()}`,
               },
             ],
           },

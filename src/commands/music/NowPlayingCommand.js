@@ -1,4 +1,5 @@
 const BaseCommand = require('../../utils/structures/BaseCommand')
+const moment = require('moment')
 
 module.exports = class NowPlayingCommand extends BaseCommand {
   constructor() {
@@ -34,6 +35,32 @@ module.exports = class NowPlayingCommand extends BaseCommand {
       )
       return
     }
+    const duration = moment.duration({
+      ms: player.queue[0].length,
+    })
+    const progression = moment.duration({ ms: player.position * 1000 })
+    let progressBar = [
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+      '▬',
+    ]
+    const calcul = Math.round(
+      progressBar.length * (progression / 1000 / 1000 / (duration / 1000))
+    )
+    progressBar[calcul] = '||/||'
     message.channel.send({
       embed: {
         description: `Playing : [${player.queue[0].title}](${player.queue[0].uri}) !`,
@@ -54,6 +81,14 @@ module.exports = class NowPlayingCommand extends BaseCommand {
           {
             name: 'Loop',
             value: player.repeatTrack ? 'Activated' : 'Disabled',
+          },
+          {
+            name: 'Duration',
+            value: `\`[${moment(progression / 1000).minutes()}:${moment(
+              progression / 1000
+            ).seconds()}]\` ${progressBar.join(
+              ''
+            )} \`[${duration.minutes()}:${duration.seconds()}]\``,
           },
         ],
       },

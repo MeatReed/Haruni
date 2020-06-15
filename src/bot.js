@@ -3,6 +3,7 @@ const { Client, Message } = require('discord.js')
 const { registerCommands, registerEvents } = require('./utils/registry')
 const client = new Client()
 const { LavaClient } = require('@anonymousg/lavajs')
+const moment = require('moment')
 
 const nodes = [
   {
@@ -29,6 +30,9 @@ const nodes = [
         player.playing = true
         const guild = client.guilds.cache.get(player.options.guild.id)
         const channel = guild.channels.cache.get(player.options.textChannel.id)
+        const duration = moment.duration({
+          ms: player.queue[0].length,
+        })
         channel.send({
           embed: {
             description: `Playing : [${player.queue[0].title}](${player.queue[0].uri}) !`,
@@ -49,6 +53,10 @@ const nodes = [
               {
                 name: 'Loop',
                 value: player.repeatTrack ? 'Activated' : 'Disabled',
+              },
+              {
+                name: 'Duration',
+                value: `${duration.minutes()}:${duration.seconds()}`,
               },
             ],
           },
