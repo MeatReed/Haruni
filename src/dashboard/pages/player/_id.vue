@@ -18,10 +18,29 @@
           :disabled="player"
           @change="seekPlayer"
         ></v-progress-linear>
+        <v-chip v-if="player" class="ma-1">
+          Author: {{ player.queue[0].author }}
+        </v-chip>
+        <v-chip v-if="player" class="ma-1">
+          Voice Channel: {{ player.options.voiceChannel.name }}
+        </v-chip>
+        <v-chip v-if="player" class="ma-1">
+          Text Channel: #{{ player.options.textChannel.name }}
+        </v-chip>
+        <v-chip v-if="player" class="ma-1">
+          Requested by: {{ player.queue[0].user.tag }}
+        </v-chip>
       </v-col>
     </v-row>
     <v-row class="text-center">
       <v-col>
+        <p v-if="player">
+          {{ duration(player.position).minutes() }}:{{
+            duration(player.position).seconds()
+          }}/{{ duration(player.queue[0].length).minutes() }}:{{
+            duration(player.queue[0].length).seconds()
+          }}
+        </p>
         <v-btn v-if="player" color="success" @click="replay">Replay</v-btn>
         <v-btn v-if="player" color="success" @click="pause">{{
           player.playPaused ? 'Resume' : 'Pause'
@@ -43,22 +62,14 @@
     <v-row v-if="player">
       <v-col>
         <h3>Queue</h3>
-        <v-simple-table>
-          <template v-slot:default>
-            <thead>
-              <tr>
-                <th class="text-left">Title</th>
-                <th class="text-left">URI</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="item in player.queue.slice(1)" :key="item.title">
-                <td>{{ item.title }}</td>
-                <td>{{ item.uri }}</td>
-              </tr>
-            </tbody>
-          </template>
-        </v-simple-table>
+        <v-data-table
+          :headers="headersQueue"
+          :items="player.queue.slice(1)"
+          disable-filtering
+          disable-sort
+          @click:row="selectMusicBtn"
+        >
+        </v-data-table>
       </v-col>
     </v-row>
     <div class="text-center ma-2">
@@ -66,10 +77,38 @@
         {{ snackbarText }}
       </v-snackbar>
     </div>
+    <v-dialog v-if="selectMusic" v-model="dialogMusic" width="500">
+      <v-card>
+        <v-img :src="selectMusic.thumbnail.max" />
+        <v-card-title>
+          {{ selectMusic.title }}
+        </v-card-title>
+
+        <v-card-text> Author: {{ selectMusic.author }} </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-btn color="primary" text @click="dialogMusic = false">
+            Play
+          </v-btn>
+          <v-btn color="primary" text @click="dialogMusic = false">
+            Remove
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialogMusic = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+const moment = require('moment')
+moment.locale('fr')
+
 export default {
   fetch() {
     this.$store
@@ -101,6 +140,19 @@ export default {
       playerBar: null,
       volume: null,
       showVolumeSlide: false,
+      headersQueue: [
+        {
+          text: 'Title',
+          align: 'start',
+          sortable: false,
+          value: 'title',
+        },
+        { text: 'Author', value: 'author' },
+        { text: 'URI', value: 'uri' },
+      ],
+      queueTable: null,
+      dialogMusic: false,
+      selectMusic: null,
     }
   },
   watch: {
@@ -181,6 +233,7 @@ export default {
         })
         .then((res) => {
           if (res) {
+            this.playerBar = 0
             this.snackbarText = "The bot isn't playing music anymore."
             this.snackbarColor = 'success'
             this.snackbar = true
@@ -214,6 +267,15 @@ export default {
             this.snackbar = true
           }
         })
+    },
+    selectMusicBtn(row, i) {
+      this.selectMusic = row
+      this.dialogMusic = true
+    },
+    duration(ms) {
+      return moment.duration({
+        ms,
+      })
     },
   },
 }

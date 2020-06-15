@@ -241,6 +241,39 @@ router.post('/setVolume/:guildID/:volume', async (req, res) => {
   }
 })
 
+router.post('/removeQueue/:guildID/:songNumber', async (req, res) => {
+  const client = req.client
+  const guildID = req.params.guildID
+  const volume = parseInt(req.params.volume)
+  if (!guildID && !volume) {
+    return res.status(400).json({
+      error: 'No id',
+    })
+  }
+  const guild = client.guilds.cache.get(guildID)
+  if (!guild) {
+    return res.status(400).json({
+      error: 'The guild does not exist.',
+    })
+  }
+  const player = client.lavaClient.playerCollection.get(guildID)
+  if (!player) {
+    return res.status(400).json({
+      error: "The bot doesn't currently play music.",
+    })
+  }
+  try {
+    await player.setVolume(volume)
+    res.json(true)
+  } catch (error) {
+    if (error) {
+      return res.status(400).json({
+        error: 'An error has occurred.',
+      })
+    }
+  }
+})
+
 export default {
   path: '/api',
   handler: router,
