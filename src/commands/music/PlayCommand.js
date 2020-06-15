@@ -65,6 +65,29 @@ module.exports = class PlayCommand extends BaseCommand {
     }
     if (!player.playing) {
       player.play()
+    } else {
+      if (!search.tracks) {
+        message.channel.send({
+          embed: {
+            description: `Adding music [${search.title}](${search.uri}) !`,
+            color: 16711717,
+            timestamp: new Date(),
+            thumbnail: {
+              url: search.thumbnail.standard,
+            },
+            fields: [
+              {
+                name: 'Author',
+                value: search.author,
+              },
+              {
+                name: 'Requested by',
+                value: search.user.tag,
+              },
+            ],
+          },
+        })
+      }
     }
   }
 }

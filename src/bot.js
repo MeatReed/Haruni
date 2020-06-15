@@ -16,13 +16,14 @@ const nodes = [
   setTimeout(() => {
     client.lavaClient = new LavaClient(client, nodes)
       .on('queueOver', (player) => {
+        player.playing = false
         const guild = client.guilds.cache.get(player.options.guild.id)
         const channel = guild.channels.cache.get(player.options.textChannel.id)
         client.InfoEmbed(channel, 'No more music in the queue.')
         player.destroy()
       })
       .on('trackOver', (player) => {
-        console.log('trackOver')
+        player.playing = false
       })
       .on('trackPlay', (track, player) => {
         player.playing = true
