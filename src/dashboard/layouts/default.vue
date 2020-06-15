@@ -26,7 +26,7 @@
     <v-main>
       <nuxt />
     </v-main>
-    <v-footer :fixed="fixed" app>
+    <v-footer fixed app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -38,7 +38,6 @@ export default {
     return {
       clipped: false,
       drawer: false,
-      fixed: false,
       items: [
         {
           icon: 'mdi-home',
@@ -46,9 +45,7 @@ export default {
           to: '/',
         },
       ],
-      right: true,
-      rightDrawer: false,
-      title: 'LavaJS test',
+      title: 'Haruni Player',
     }
   },
 }
