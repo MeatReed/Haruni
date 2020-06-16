@@ -12,10 +12,16 @@
           }}
         </h2>
         <v-progress-linear
+          v-if="!player || !player.queue[0]"
+          color="amber"
+          height="25"
+        ></v-progress-linear>
+        <v-progress-linear
+          v-else
           v-model="playerBar"
           color="amber"
           height="25"
-          :disabled="player"
+          :disabled="player ? false : true"
           @change="seekPlayer"
         ></v-progress-linear>
         <v-chip v-if="player && player.queue[0]" class="ma-1">
@@ -41,21 +47,53 @@
             duration(player.queue[0].length).seconds()
           }}
         </p>
-        <v-btn v-if="player" color="success" @click="replay">Replay</v-btn>
-        <v-btn v-if="player" color="success" @click="pause">{{
-          player.playPaused ? 'Resume' : 'Pause'
-        }}</v-btn>
+        <v-btn v-if="!player" color="success" @click="connect"
+          >Connect the bot</v-btn
+        >
+        <v-btn
+          v-if="player"
+          color="success"
+          :disabled="!player.queue[0]"
+          @click="replay"
+          >Replay</v-btn
+        >
+        <v-btn
+          v-if="player"
+          color="success"
+          :disabled="!player.queue[0]"
+          @click="pause"
+          >{{ player.playPaused ? 'Resume' : 'Pause' }}</v-btn
+        >
         <v-btn
           v-if="player"
           :color="player.repeatTrack ? 'success' : 'error'"
+          :disabled="!player.queue[0]"
           @click="loop"
           >Loop</v-btn
         >
-        <v-btn v-if="player" color="success" @click="skip">Skip</v-btn>
-        <v-btn v-if="player" color="success" @click="stop">Stop</v-btn>
+        <v-btn
+          v-if="player"
+          color="success"
+          :disabled="!player.queue[0]"
+          @click="skip"
+          >Skip</v-btn
+        >
+        <v-btn
+          v-if="player"
+          color="success"
+          :disabled="!player.queue[0]"
+          @click="stop"
+          >Stop</v-btn
+        >
         <v-menu v-if="player" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn small fab v-bind="attrs" v-on="on">
+            <v-btn
+              small
+              fab
+              :disabled="!player.queue[0]"
+              v-bind="attrs"
+              v-on="on"
+            >
               <v-icon dark>mdi-volume-high</v-icon>
             </v-btn>
           </template>
@@ -114,11 +152,40 @@
           Add a music
         </v-card-title>
 
-        <v-card-text></v-card-text>
+        <v-card-text>
+          <v-row>
+            <v-col>
+              <v-text-field v-model="lavaSearchInput"></v-text-field>
+            </v-col>
+          </v-row>
+          <v-list v-if="listTracks.type === 'search'">
+            <v-list-item-group v-model="selectItemVideo" color="primary">
+              <v-list-item v-for="(item, i) in listTracks.tracks" :key="i">
+                <v-list-item-content>
+                  <v-list-item-title v-text="item.title"></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+          <v-list v-if="listTracks.type === 'uri'">
+            <v-list-item-group v-model="selectItemVideo" color="primary">
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-title
+                    v-text="listTracks.tracks.title"
+                  ></v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
+          </v-list>
+        </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
+          <v-btn color="primary" text @click="searchSongs">
+            Search
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="dialogAddMusic = false">
             Close
@@ -127,35 +194,29 @@
       </v-card>
     </v-dialog>
     <v-btn
-      :color="$vuetify.theme.dark ? 'black' : 'white'"
-      bottom
-      fab
-      fixed
-      left
-      @click="$vuetify.theme.dark = $vuetify.theme.dark ? false : true"
-    >
-      <v-icon :color="$vuetify.theme.dark ? 'white' : 'black'"
-        >mdi-white-balance-sunny</v-icon
-      >
-    </v-btn>
-    <v-btn
       color="primary"
       bottom
       fab
       fixed
       right
+      :disabled="!player"
       @click="dialogAddMusic = true"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
+    <dialogLogin />
   </v-container>
 </template>
 
 <script>
-const moment = require('moment')
+import moment from 'moment'
+import dialogLogin from '@/components/dialogLogin'
 moment.locale('fr')
 
 export default {
+  components: {
+    dialogLogin,
+  },
   fetch() {
     this.$store
       .dispatch('getPlayer', {
@@ -200,9 +261,78 @@ export default {
       dialogMusic: false,
       selectMusic: null,
       dialogAddMusic: false,
+      lavaSearchInput: null,
+      listTracks: {
+        type: null,
+        tracks: null,
+      },
+      selectItemVideo: null,
     }
   },
   watch: {
+    selectItemVideo(index) {
+      if (this.listTracks.type === 'uri') {
+        this.$store
+          .dispatch('addToQueue', {
+            guildID: this.$route.params.id,
+            url: this.listTracks.tracks.uri,
+          })
+          .then((res) => {
+            if (res) {
+              this.snackbarText = `${this.listTracks.tracks.title} added!`
+              this.snackbarColor = 'success'
+              this.snackbar = true
+              this.lavaSearchInput = null
+              this.dialogAddMusic = false
+              this.listTracks = {
+                type: null,
+                tracks: null,
+              }
+              this.selectItemVideo = null
+            }
+          })
+          .catch((error) => {
+            this.snackbarText = error.response.data.error
+            this.snackbarColor = 'error'
+            this.snackbar = true
+            this.listTracks = {
+              type: null,
+              tracks: null,
+            }
+            this.selectItemVideo = null
+          })
+      } else if (this.listTracks.type === 'search') {
+        this.$store
+          .dispatch('addToQueue', {
+            guildID: this.$route.params.id,
+            url: this.listTracks.tracks[index].uri,
+          })
+          .then((res) => {
+            if (res) {
+              this.snackbarText = `${this.listTracks.tracks[index].title} added!`
+              this.snackbarColor = 'success'
+              this.snackbar = true
+              this.lavaSearchInput = null
+              this.dialogAddMusic = false
+              this.listTracks = {
+                type: null,
+                tracks: null,
+              }
+              this.selectItemVideo = null
+            }
+          })
+          .catch((error) => {
+            this.snackbarText = error.response.data.error
+            this.snackbarColor = 'error'
+            this.snackbar = true
+            this.listTracks = {
+              type: null,
+              tracks: null,
+            }
+            this.selectItemVideo = null
+          })
+      }
+    },
     volume(value) {
       if (!this.player) return
       this.$store
@@ -226,6 +356,35 @@ export default {
     }, 1500)
   },
   methods: {
+    searchSongs() {
+      this.$store
+        .dispatch('lavaSearch', {
+          guildID: this.$route.params.id,
+          query: this.lavaSearchInput,
+        })
+        .then((res) => {
+          if (res[0]) {
+            this.listTracks = {
+              type: 'search',
+              tracks: res,
+            }
+          } else if (res.tracks) {
+            this.listTracks = {
+              type: null,
+              tracks: null,
+            }
+            this.snackbarText =
+              'Player online does not take playlists into account! Please use the bot in a textuelChannel.'
+            this.snackbarColor = 'error'
+            this.snackbar = true
+          } else if (res.identifier) {
+            this.listTracks = {
+              type: 'uri',
+              tracks: res,
+            }
+          }
+        })
+    },
     pause() {
       this.$store
         .dispatch('pause', {
@@ -241,6 +400,11 @@ export default {
             this.snackbarColor = 'success'
             this.snackbar = true
           }
+        })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
         })
     },
     loop() {
@@ -259,6 +423,11 @@ export default {
             this.snackbar = true
           }
         })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        })
     },
     skip() {
       this.$store
@@ -271,6 +440,11 @@ export default {
             this.snackbarColor = 'success'
             this.snackbar = true
           }
+        })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
         })
     },
     stop() {
@@ -286,6 +460,11 @@ export default {
             this.snackbar = true
           }
         })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        })
     },
     seekPlayer(number) {
       this.$store
@@ -300,6 +479,11 @@ export default {
             this.snackbar = true
           }
         })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        })
     },
     replay(number) {
       this.$store
@@ -313,6 +497,29 @@ export default {
             this.snackbarColor = 'success'
             this.snackbar = true
           }
+        })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
+        })
+    },
+    connect() {
+      this.$store
+        .dispatch('connect', {
+          guildID: this.$route.params.id,
+        })
+        .then((res) => {
+          if (res) {
+            this.snackbarText = 'Play the music again success.'
+            this.snackbarColor = 'success'
+            this.snackbar = true
+          }
+        })
+        .catch((error) => {
+          this.snackbarText = error.response.data.error
+          this.snackbarColor = 'error'
+          this.snackbar = true
         })
     },
     selectMusicBtn(row, i) {

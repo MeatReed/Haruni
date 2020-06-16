@@ -1,5 +1,17 @@
 <template>
   <v-app dark>
+    <v-btn
+      :color="$vuetify.theme.dark ? 'black' : 'white'"
+      bottom
+      fab
+      fixed
+      left
+      @click="$vuetify.theme.dark = $vuetify.theme.dark ? false : true"
+    >
+      <v-icon :color="$vuetify.theme.dark ? 'white' : 'black'"
+        >mdi-white-balance-sunny</v-icon
+      >
+    </v-btn>
     <v-navigation-drawer v-model="drawer" :clipped="clipped" fixed app>
       <v-list>
         <v-list-item

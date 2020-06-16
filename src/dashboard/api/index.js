@@ -15,7 +15,7 @@ router.get('/getPlayer/:guildID', (req, res) => {
   const guildID = req.params.guildID
   if (!guildID) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -34,15 +34,15 @@ router.get('/getPlayer/:guildID', (req, res) => {
   delete playerCloned.client
   delete playerCloned.node
   delete playerCloned.lavaJS
-  res.json(playerCloned)
+  return res.json(playerCloned)
 })
 
-router.post('/pause/:guildID', async (req, res) => {
+router.post('/pause/:guildID', isConnected, async (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
   if (!guildID) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -60,10 +60,10 @@ router.post('/pause/:guildID', async (req, res) => {
   try {
     if (player.playPaused === false) {
       await player.pause()
-      res.json(player.playPaused)
+      return res.json(player.playPaused)
     } else {
       await player.resume()
-      res.json(player.playPaused)
+      return res.json(player.playPaused)
     }
   } catch (error) {
     if (error) {
@@ -74,12 +74,12 @@ router.post('/pause/:guildID', async (req, res) => {
   }
 })
 
-router.post('/loop/:guildID', (req, res) => {
+router.post('/loop/:guildID', isConnected, (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
   if (!guildID) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -97,10 +97,10 @@ router.post('/loop/:guildID', (req, res) => {
   try {
     if (player.repeatTrack === false) {
       player.repeatTrack = true
-      res.json(player.repeatTrack)
+      return res.json(player.repeatTrack)
     } else {
       player.repeatTrack = false
-      res.json(player.repeatTrack)
+      return res.json(player.repeatTrack)
     }
   } catch (error) {
     if (error) {
@@ -111,12 +111,12 @@ router.post('/loop/:guildID', (req, res) => {
   }
 })
 
-router.post('/stop/:guildID', async (req, res) => {
+router.post('/stop/:guildID', isConnected, async (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
   if (!guildID) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -133,7 +133,7 @@ router.post('/stop/:guildID', async (req, res) => {
   }
   try {
     await player.destroy()
-    res.json(player.playState)
+    return res.json(player.playState)
   } catch (error) {
     if (error) {
       return res.status(400).json({
@@ -143,12 +143,12 @@ router.post('/stop/:guildID', async (req, res) => {
   }
 })
 
-router.post('/skip/:guildID', async (req, res) => {
+router.post('/skip/:guildID', isConnected, async (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
   if (!guildID) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -165,7 +165,7 @@ router.post('/skip/:guildID', async (req, res) => {
   }
   try {
     await player.stop()
-    res.json(true)
+    return res.json(true)
   } catch (error) {
     if (error) {
       return res.status(400).json({
@@ -175,13 +175,13 @@ router.post('/skip/:guildID', async (req, res) => {
   }
 })
 
-router.post('/seek/:guildID/:seek', async (req, res) => {
+router.post('/seek/:guildID/:seek', isConnected, async (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
   const seek = parseInt(req.params.seek)
   if (!guildID && !seek) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -198,7 +198,7 @@ router.post('/seek/:guildID/:seek', async (req, res) => {
   }
   try {
     await player.seek(seek)
-    res.json(true)
+    return res.json(true)
   } catch (error) {
     if (error) {
       return res.status(400).json({
@@ -208,13 +208,13 @@ router.post('/seek/:guildID/:seek', async (req, res) => {
   }
 })
 
-router.post('/setVolume/:guildID/:volume', async (req, res) => {
+router.post('/setVolume/:guildID/:volume', isConnected, async (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
   const volume = parseInt(req.params.volume)
   if (!guildID && !volume) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -231,7 +231,7 @@ router.post('/setVolume/:guildID/:volume', async (req, res) => {
   }
   try {
     await player.setVolume(volume)
-    res.json(true)
+    return res.json(true)
   } catch (error) {
     if (error) {
       return res.status(400).json({
@@ -241,13 +241,54 @@ router.post('/setVolume/:guildID/:volume', async (req, res) => {
   }
 })
 
-router.post('/removeQueue/:guildID/:songNumber', async (req, res) => {
+router.post('/connect/:guildID', isConnected, (req, res) => {
   const client = req.client
   const guildID = req.params.guildID
-  const volume = parseInt(req.params.volume)
-  if (!guildID && !volume) {
+  if (!guildID) {
     return res.status(400).json({
-      error: 'No id',
+      error: 'One value is missing.',
+    })
+  }
+  const guild = client.guilds.cache.get(guildID)
+  if (!guild) {
+    return res.status(400).json({
+      error: 'The guild does not exist.',
+    })
+  }
+  const member = guild.members.cache.get(req.user.id)
+  if (!member.voice.channel) {
+    return res.status(400).json({
+      error: 'Please join a vocal channel!',
+    })
+  }
+  const textChannel = guild.channels.cache.get(
+    process.env.DEFAULT_TEXTCHANNEL_ID
+  )
+  if (!client.lavaClient.playerCollection.get(guildID)) {
+    client.lavaClient.spawnPlayer(client.lavaClient, {
+      guild: guildID,
+      voiceChannel: member.voice.channel,
+      textChannel,
+      deafen: true,
+      trackRepeat: false,
+      queueRepeat: false,
+      skipOnError: true,
+    })
+    return res.json(client.lavaClient.playerCollection.get(guildID))
+  } else {
+    return res.status(400).json({
+      error: 'The bot is already connected!',
+    })
+  }
+})
+
+router.post('/lavaSearch/:guildID', isConnected, async (req, res) => {
+  const client = req.client
+  const guildID = req.params.guildID
+  const query = req.body.query
+  if (!guildID && !query) {
+    return res.status(400).json({
+      error: 'One value is missing.',
     })
   }
   const guild = client.guilds.cache.get(guildID)
@@ -257,14 +298,21 @@ router.post('/removeQueue/:guildID/:songNumber', async (req, res) => {
     })
   }
   const player = client.lavaClient.playerCollection.get(guildID)
-  if (!player) {
-    return res.status(400).json({
-      error: "The bot doesn't currently play music.",
-    })
-  }
   try {
-    await player.setVolume(volume)
-    res.json(true)
+    const songs = await player.lavaSearch(
+      query,
+      {
+        tag: `${req.user.username}#${req.user.discriminator}`,
+      },
+      false
+    )
+    if (songs) {
+      return res.json(songs)
+    } else {
+      return res.json({
+        msg: 'No track found.',
+      })
+    }
   } catch (error) {
     if (error) {
       return res.status(400).json({
@@ -273,6 +321,70 @@ router.post('/removeQueue/:guildID/:songNumber', async (req, res) => {
     }
   }
 })
+
+router.post('/addToQueue/:guildID', isConnected, async (req, res) => {
+  const client = req.client
+  const guildID = req.params.guildID
+  const url = req.body.url
+  if (!guildID && !url) {
+    return res.status(400).json({
+      error: 'One value is missing.',
+    })
+  }
+  const guild = client.guilds.cache.get(guildID)
+  if (!guild) {
+    return res.status(400).json({
+      error: 'The guild does not exist.',
+    })
+  }
+  const member = guild.members.cache.get(req.user.id)
+  if (!member.voice.channel) {
+    return res.status(400).json({
+      error: 'Please join a vocal channel!',
+    })
+  }
+  const player = client.lavaClient.playerCollection.get(guildID)
+  if (!player) {
+    return res.status(400).json({
+      error: "The bot doesn't currently play music.",
+    })
+  }
+  try {
+    const songs = await player.lavaSearch(
+      url,
+      {
+        tag: `${req.user.username}#${req.user.discriminator}`,
+      },
+      true
+    )
+    if (songs) {
+      if (!player.playing) {
+        player.play()
+      }
+      return res.json(songs)
+    } else {
+      return res.json({
+        msg: 'No track found.',
+      })
+    }
+  } catch (error) {
+    if (error) {
+      return res.status(400).json({
+        error: 'An error has occurred.',
+      })
+    }
+  }
+})
+
+function isConnected(req, res, next) {
+  const user = req.user
+  if (!user) {
+    return res.status(400).json({
+      error: 'Not connected!',
+    })
+  }
+  next()
+}
 
 export default {
   path: '/api',
