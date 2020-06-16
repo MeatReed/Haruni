@@ -217,25 +217,6 @@ export default {
   components: {
     dialogLogin,
   },
-  fetch() {
-    this.$store
-      .dispatch('getPlayer', {
-        guildID: this.$route.params.id,
-      })
-      .then((res) => {
-        this.error = false
-        this.errorMessage = null
-        this.player = res
-        this.playerBar = (res.position / res.queue[0].length) * 100
-        this.volume = res.volume
-      })
-      .catch((error) => {
-        this.snackbarText = error.response.data.error
-        this.snackbarColor = 'error'
-        this.snackbar = true
-        this.player = null
-      })
-  },
   data() {
     return {
       player: null,
@@ -272,255 +253,144 @@ export default {
   watch: {
     selectItemVideo(index) {
       if (this.listTracks.type === 'uri') {
-        this.$store
-          .dispatch('addToQueue', {
-            guildID: this.$route.params.id,
-            url: this.listTracks.tracks.uri,
-          })
-          .then((res) => {
-            if (res) {
-              this.snackbarText = `${this.listTracks.tracks.title} added!`
-              this.snackbarColor = 'success'
-              this.snackbar = true
-              this.lavaSearchInput = null
-              this.dialogAddMusic = false
-              this.listTracks = {
-                type: null,
-                tracks: null,
-              }
-              this.selectItemVideo = null
-            }
-          })
-          .catch((error) => {
-            this.snackbarText = error.response.data.error
-            this.snackbarColor = 'error'
-            this.snackbar = true
-            this.listTracks = {
-              type: null,
-              tracks: null,
-            }
-            this.selectItemVideo = null
-          })
+        this.socket.emit('addToQueue', {
+          guildID: this.$route.params.id,
+          user: this.$store.state.user,
+          uri: this.listTracks.tracks.uri,
+        })
+        this.lavaSearchInput = null
+        this.dialogAddMusic = false
+        this.listTracks = {
+          type: null,
+          tracks: null,
+        }
+        this.selectItemVideo = null
       } else if (this.listTracks.type === 'search') {
-        this.$store
-          .dispatch('addToQueue', {
-            guildID: this.$route.params.id,
-            url: this.listTracks.tracks[index].uri,
-          })
-          .then((res) => {
-            if (res) {
-              this.snackbarText = `${this.listTracks.tracks[index].title} added!`
-              this.snackbarColor = 'success'
-              this.snackbar = true
-              this.lavaSearchInput = null
-              this.dialogAddMusic = false
-              this.listTracks = {
-                type: null,
-                tracks: null,
-              }
-              this.selectItemVideo = null
-            }
-          })
-          .catch((error) => {
-            this.snackbarText = error.response.data.error
-            this.snackbarColor = 'error'
-            this.snackbar = true
-            this.listTracks = {
-              type: null,
-              tracks: null,
-            }
-            this.selectItemVideo = null
-          })
+        this.socket.emit('addToQueue', {
+          guildID: this.$route.params.id,
+          user: this.$store.state.user,
+          uri: this.listTracks.tracks[index].uri,
+        })
+        this.lavaSearchInput = null
+        this.dialogAddMusic = false
+        this.listTracks = {
+          type: null,
+          tracks: null,
+        }
+        this.selectItemVideo = null
       }
     },
     volume(value) {
-      if (!this.player) return
-      this.$store
-        .dispatch('setVolume', {
-          guildID: this.$route.params.id,
-          volume: value,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = `Volume ${value}%`
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
+      this.socket.emit('setVolume', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        volumeNumber: value,
+      })
     },
   },
   mounted() {
     const context = this
     setInterval(function () {
-      context.$fetch()
+      context.socket.emit('getPlayer', {
+        guildID: context.$route.params.id,
+      })
     }, 1500)
+    this.socket = this.$nuxtSocket({
+      name: 'player',
+      channel: '/',
+      reconnection: true,
+    })
+    this.socket.on('sendPlayer', (data) => {
+      this.player = data
+      this.playerBar = (data.position / data.queue[0].length) * 100
+      this.volume = data.volume
+    })
+    this.socket.on('errorMessage', (data) => {
+      this.snackbarText = data
+      this.snackbarColor = 'error'
+      this.snackbar = true
+    })
+    this.socket.on('successMessage', (data) => {
+      this.snackbarText = data
+      this.snackbarColor = 'success'
+      this.snackbar = true
+    })
+    this.socket.on('searchSongs', (data) => {
+      if (data[0]) {
+        this.listTracks = {
+          type: 'search',
+          tracks: data,
+        }
+      } else if (data.tracks) {
+        this.listTracks = {
+          type: null,
+          tracks: null,
+        }
+        this.snackbarText =
+          'Player online does not take playlists into account! Please use the bot in a textuelChannel.'
+        this.snackbarColor = 'error'
+        this.snackbar = true
+      } else if (data.identifier) {
+        this.listTracks = {
+          type: 'uri',
+          tracks: data,
+        }
+      }
+    })
   },
   methods: {
     searchSongs() {
-      this.$store
-        .dispatch('lavaSearch', {
-          guildID: this.$route.params.id,
-          query: this.lavaSearchInput,
-        })
-        .then((res) => {
-          if (res[0]) {
-            this.listTracks = {
-              type: 'search',
-              tracks: res,
-            }
-          } else if (res.tracks) {
-            this.listTracks = {
-              type: null,
-              tracks: null,
-            }
-            this.snackbarText =
-              'Player online does not take playlists into account! Please use the bot in a textuelChannel.'
-            this.snackbarColor = 'error'
-            this.snackbar = true
-          } else if (res.identifier) {
-            this.listTracks = {
-              type: 'uri',
-              tracks: res,
-            }
-          }
-        })
+      this.socket.emit('lavaSearch', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        query: this.lavaSearchInput,
+      })
     },
     pause() {
-      this.$store
-        .dispatch('pause', {
-          guildID: this.$route.params.id,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = 'The music has been paused.'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          } else {
-            this.snackbarText = 'The music has been resumed.'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('pause', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+      })
     },
     loop() {
-      this.$store
-        .dispatch('loop', {
-          guildID: this.$route.params.id,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = `Loop activated, \`${this.player.queue[0].title}\` music will repeat.`
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          } else {
-            this.snackbarText = 'Loop off.'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('loop', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+      })
     },
     skip() {
-      this.$store
-        .dispatch('skip', {
-          guildID: this.$route.params.id,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = 'The music has been skipped!'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('skip', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+      })
     },
     stop() {
-      this.$store
-        .dispatch('stop', {
-          guildID: this.$route.params.id,
-        })
-        .then((res) => {
-          if (res) {
-            this.playerBar = 0
-            this.snackbarText = "The bot isn't playing music anymore."
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('stop', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+      })
+      this.player = null
+      this.playerBar = 0
     },
     seekPlayer(number) {
-      this.$store
-        .dispatch('seek', {
-          guildID: this.$route.params.id,
-          seek: (number / 100) * this.player.queue[0].length,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = 'Seek'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('seek', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        seekNumber: (number / 100) * this.player.queue[0].length,
+      })
     },
     replay(number) {
-      this.$store
-        .dispatch('seek', {
-          guildID: this.$route.params.id,
-          seek: 0,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = 'Play the music again success.'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('seek', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        seekNumber: 0,
+      })
     },
     connect() {
-      this.$store
-        .dispatch('connect', {
-          guildID: this.$route.params.id,
-        })
-        .then((res) => {
-          if (res) {
-            this.snackbarText = 'Play the music again success.'
-            this.snackbarColor = 'success'
-            this.snackbar = true
-          }
-        })
-        .catch((error) => {
-          this.snackbarText = error.response.data.error
-          this.snackbarColor = 'error'
-          this.snackbar = true
-        })
+      this.socket.emit('connectPlayer', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+      })
     },
     selectMusicBtn(row, i) {
       this.selectMusic = row

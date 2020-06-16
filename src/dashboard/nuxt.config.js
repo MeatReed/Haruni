@@ -50,7 +50,19 @@ module.exports = {
     ],
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
+    'nuxt-socket-io',
   ],
+  io: {
+    // module options
+    sockets: [
+      // Required
+      {
+        // At least one entry is required
+        name: 'player',
+        url: process.env.BASE_URL,
+      },
+    ],
+  },
   proxy: {
     '/api': {
       target: process.env.BASE_URL,
