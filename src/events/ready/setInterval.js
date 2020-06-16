@@ -11,6 +11,6 @@ module.exports = class ReadyEvent extends BaseEvent {
       client.user.setActivity(client.prefix + 'help | By ' + owner.tag, {
         type: 'LISTENING',
       })
-    }, 900000)
+    }, 360000)
   }
 }

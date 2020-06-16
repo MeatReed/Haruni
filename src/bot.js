@@ -57,7 +57,7 @@ const nodes = [
         })
       })
     console.log('Lavalink connected!')
-  }, 10000)
+  }, 15000)
   client.commands = new Map()
   client.aliases = new Map()
   client.events = new Map()

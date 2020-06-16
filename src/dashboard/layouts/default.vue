@@ -1,17 +1,5 @@
 <template>
   <v-app dark>
-    <v-btn
-      :color="$vuetify.theme.dark ? 'black' : 'white'"
-      bottom
-      fab
-      fixed
-      left
-      @click="$vuetify.theme.dark = $vuetify.theme.dark ? false : true"
-    >
-      <v-icon :color="$vuetify.theme.dark ? 'white' : 'black'"
-        >mdi-white-balance-sunny</v-icon
-      >
-    </v-btn>
     <v-navigation-drawer v-model="drawer" :clipped="clipped" fixed app>
       <v-list>
         <v-list-item
@@ -29,6 +17,18 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn
+            block
+            :color="$vuetify.theme.dark ? 'black' : 'white'"
+            @click="$vuetify.theme.dark = $vuetify.theme.dark ? false : true"
+            ><v-icon :color="$vuetify.theme.dark ? 'white' : 'black'"
+              >mdi-white-balance-sunny</v-icon
+            ></v-btn
+          >
+        </div>
+      </template>
     </v-navigation-drawer>
     <v-app-bar :clipped-left="clipped" fixed app>
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />

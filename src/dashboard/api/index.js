@@ -261,9 +261,9 @@ router.post('/connect/:guildID', isConnected, (req, res) => {
       error: 'Please join a vocal channel!',
     })
   }
-  const textChannel = guild.channels.cache.get(
-    process.env.DEFAULT_TEXTCHANNEL_ID
-  )
+  const textChannel = client.guilds.cache
+    .get(process.env.DEFAULT_GUILD_ID)
+    .channels.cache.get(process.env.DEFAULT_TEXTCHANNEL_ID)
   if (!client.lavaClient.playerCollection.get(guildID)) {
     client.lavaClient.spawnPlayer(client.lavaClient, {
       guild: guildID,
