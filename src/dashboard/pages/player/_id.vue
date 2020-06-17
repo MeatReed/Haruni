@@ -1,5 +1,8 @@
 <template>
   <v-container>
+    <v-row v-if="player && player.queue[0]" justify="center">
+      <v-img :src="player.queue[0].thumbnail.max" max-width="250"></v-img>
+    </v-row>
     <v-row>
       <v-col>
         <h2>
@@ -120,6 +123,7 @@
           :items="player.queue.slice(1)"
           disable-filtering
           disable-sort
+          item-key="trackString"
           @click:row="selectMusicBtn"
         >
         </v-data-table>
@@ -132,20 +136,23 @@
     </div>
     <v-dialog v-if="selectMusic" v-model="dialogMusic" width="500">
       <v-card>
-        <v-img :src="selectMusic.thumbnail.max" />
+        <v-img :src="selectMusic.info.thumbnail.max" />
         <v-card-title>
-          {{ selectMusic.title }}
+          {{ selectMusic.info.title }}
         </v-card-title>
 
-        <v-card-text> Author: {{ selectMusic.author }} </v-card-text>
+        <v-card-text>
+          Author: {{ selectMusic.info.author }} <br />
+          URI: {{ selectMusic.info.uri }}</v-card-text
+        >
 
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn color="primary" text @click="dialogMusic = false">
+          <v-btn color="primary" text @click="queueToPlayer">
             Play
           </v-btn>
-          <v-btn color="primary" text @click="dialogMusic = false">
+          <v-btn color="primary" text @click="removeMusicQueue">
             Remove
           </v-btn>
           <v-spacer></v-spacer>
@@ -343,7 +350,7 @@ export default {
       context.socket.emit('getPlayer', {
         guildID: context.$route.params.id,
       })
-    }, 1500)
+    }, 1550)
     this.socket = this.$nuxtSocket({
       name: 'player',
       channel: '/',
@@ -436,9 +443,28 @@ export default {
         user: this.$store.state.user,
       })
     },
-    selectMusicBtn(row, i) {
-      this.selectMusic = row
+    selectMusicBtn(item) {
+      this.selectMusic = {
+        info: item,
+        index: this.player.queue.indexOf(item),
+      }
       this.dialogMusic = true
+    },
+    queueToPlayer() {
+      if (!this.selectMusic.index) return
+      this.socket.emit('queueToPlayer', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        musicNumber: this.selectMusic.index,
+      })
+    },
+    removeMusicQueue() {
+      if (!this.selectMusic.index) return
+      this.socket.emit('removeMusicQueue', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        musicNumber: this.selectMusic.index,
+      })
     },
     setEQDefault() {
       this.socket.emit('setEqualizerDefault', {
