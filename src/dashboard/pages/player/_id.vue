@@ -217,6 +217,17 @@ export default {
   components: {
     dialogLogin,
   },
+  fetch() {
+    this.$axios
+      .$get(
+        this.$axios.defaults.baseURL + `/api/guild/${this.$route.params.id}`
+      )
+      .catch(() => {
+        this._routerRoot.context.redirect(
+          `https://discordapp.com/oauth2/authorize?client_id=722181826545713313&scope=bot&permissions=1609887095&guild_id=${this.$route.params.id}`
+        )
+      })
+  },
   data() {
     return {
       player: null,

@@ -73,7 +73,7 @@ module.exports = async (client) => {
   )
 
   app.get('/callback', passport.authenticate('discord'), (req, res) => {
-    res.redirect('/')
+    res.redirect('/player')
   })
 
   // Init Nuxt.js
@@ -97,7 +97,7 @@ module.exports = async (client) => {
   const io = require('socket.io')(server)
 
   io.on('connection', (socket) => {
-    socket.on('getPlayer', async (data) => {
+    socket.on('getPlayer', (data) => {
       const guildID = data.guildID
       if (!guildID) {
         socket.emit('errorMessage', 'One value is missing.')
@@ -121,10 +121,9 @@ module.exports = async (client) => {
       delete playerCloned.node
       delete playerCloned.lavaJS
       socket.emit('sendPlayer', playerCloned)
-      return
     })
 
-    socket.on('connectPlayer', async (data) => {
+    socket.on('connectPlayer', (data) => {
       const user = data.user
       if (!user) {
         socket.emit('errorMessage', 'You are not connected!')
