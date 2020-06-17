@@ -33,7 +33,7 @@ module.exports = class PlayCommand extends BaseCommand {
       return
     }
     if (!client.lavaClient.playerCollection.get(message.guild.id)) {
-      client.lavaClient.spawnPlayer(client.lavaClient, {
+      client.lavaClient.spawnPlayer({
         guild: message.guild,
         voiceChannel: message.member.voice.channel,
         textChannel: message.channel,
@@ -65,7 +65,7 @@ module.exports = class PlayCommand extends BaseCommand {
         message.channel,
         `\`${search.tracks.length}\` musics have been added.`
       )
-    } else if (search[0]) {
+    } else if (search.length > 1) {
       let msg = search
         .slice(0, 9)
         .map((s, i) => '**' + (i + 1) + '** - [' + s.title + '](' + s.uri + ')')
@@ -111,7 +111,7 @@ module.exports = class PlayCommand extends BaseCommand {
           })
           collector.on('end', (collected, reason) => {
             if (reason === 'STOPPED') {
-              client.SuccesEmbed(message, 'You canceled.')
+              client.SuccessEmbed(message, 'You canceled.')
             } else if (reason === 'PLAY') {
             } else {
               client.ErrorEmbed(message.channel, 'Too long to choose!')
@@ -130,6 +130,7 @@ module.exports = class PlayCommand extends BaseCommand {
     if (!player.playing) {
       player.play()
     } else if (!search.tracks) {
+      console.log(player)
       if (!song) {
         song = search
       }

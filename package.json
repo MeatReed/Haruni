@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@anonymousg/lavajs": "^2.0.7",
+    "@anonymousg/lavajs": "^3.1.0",
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/dotenv": "^1.4.1",
     "body-parser": "^1.19.0",

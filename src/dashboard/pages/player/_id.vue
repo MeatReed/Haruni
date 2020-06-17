@@ -54,6 +54,15 @@
           v-if="player"
           color="success"
           :disabled="!player.queue[0]"
+          fab
+          @click="dialogEQ = true"
+        >
+          EQ
+        </v-btn>
+        <v-btn
+          v-if="player"
+          color="success"
+          :disabled="!player.queue[0]"
           @click="replay"
           >Replay</v-btn
         >
@@ -146,6 +155,33 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialogEQ" width="500">
+      <v-card>
+        <v-card-title>
+          Equalizer
+        </v-card-title>
+
+        <v-card-text>
+          <v-slider v-model="valueBand" max="14" label="Band" />
+          <v-slider
+            v-model="valueGain"
+            :step="0.01"
+            max="1"
+            min="-0.25"
+            label="Gain"
+          />
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="dialogMusic = false">
+            Close
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-dialog v-model="dialogAddMusic" width="500">
       <v-card>
         <v-card-title>
@@ -158,22 +194,11 @@
               <v-text-field v-model="lavaSearchInput"></v-text-field>
             </v-col>
           </v-row>
-          <v-list v-if="listTracks.type === 'search'">
+          <v-list v-if="listTracks">
             <v-list-item-group v-model="selectItemVideo" color="primary">
               <v-list-item v-for="(item, i) in listTracks.tracks" :key="i">
                 <v-list-item-content>
                   <v-list-item-title v-text="item.title"></v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-          <v-list v-if="listTracks.type === 'uri'">
-            <v-list-item-group v-model="selectItemVideo" color="primary">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-title
-                    v-text="listTracks.tracks.title"
-                  ></v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
             </v-list-item-group>
@@ -255,47 +280,52 @@ export default {
       dialogAddMusic: false,
       lavaSearchInput: null,
       listTracks: {
-        type: null,
         tracks: null,
       },
       selectItemVideo: null,
+      valueGain: null,
+      valueBand: null,
+      dialogEQ: false,
     }
   },
   watch: {
     selectItemVideo(index) {
-      if (this.listTracks.type === 'uri') {
-        this.socket.emit('addToQueue', {
-          guildID: this.$route.params.id,
-          user: this.$store.state.user,
-          uri: this.listTracks.tracks.uri,
-        })
-        this.lavaSearchInput = null
-        this.dialogAddMusic = false
-        this.listTracks = {
-          type: null,
-          tracks: null,
-        }
-        this.selectItemVideo = null
-      } else if (this.listTracks.type === 'search') {
-        this.socket.emit('addToQueue', {
-          guildID: this.$route.params.id,
-          user: this.$store.state.user,
-          uri: this.listTracks.tracks[index].uri,
-        })
-        this.lavaSearchInput = null
-        this.dialogAddMusic = false
-        this.listTracks = {
-          type: null,
-          tracks: null,
-        }
-        this.selectItemVideo = null
+      if (index === null) return
+      if (this.listTracks.tracks === null) return
+      this.socket.emit('addToQueue', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        uri: this.listTracks.tracks[index].uri,
+      })
+      this.lavaSearchInput = null
+      this.dialogAddMusic = false
+      this.listTracks = {
+        tracks: null,
       }
+      this.selectItemVideo = null
     },
     volume(value) {
       this.socket.emit('setVolume', {
         guildID: this.$route.params.id,
         user: this.$store.state.user,
         volumeNumber: value,
+      })
+    },
+    valueBand(value) {
+      this.socket.emit('setEqualizer', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        gain: this.valueGain,
+        band: value,
+      })
+    },
+    valueGain(value) {
+      console.log(value)
+      this.socket.emit('setEqualizer', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        gain: value,
+        band: this.valueBand,
       })
     },
   },
@@ -313,7 +343,9 @@ export default {
     })
     this.socket.on('sendPlayer', (data) => {
       this.player = data
-      this.playerBar = (data.position / data.queue[0].length) * 100
+      if (data.queue[0]) {
+        this.playerBar = (data.position / data.queue[0].length) * 100
+      }
       this.volume = data.volume
     })
     this.socket.on('errorMessage', (data) => {
@@ -329,23 +361,16 @@ export default {
     this.socket.on('searchSongs', (data) => {
       if (data[0]) {
         this.listTracks = {
-          type: 'search',
           tracks: data,
         }
       } else if (data.tracks) {
         this.listTracks = {
-          type: null,
           tracks: null,
         }
         this.snackbarText =
           'Player online does not take playlists into account! Please use the bot in a textuelChannel.'
         this.snackbarColor = 'error'
         this.snackbar = true
-      } else if (data.identifier) {
-        this.listTracks = {
-          type: 'uri',
-          tracks: data,
-        }
       }
     })
   },
@@ -390,7 +415,7 @@ export default {
         seekNumber: (number / 100) * this.player.queue[0].length,
       })
     },
-    replay(number) {
+    replay() {
       this.socket.emit('seek', {
         guildID: this.$route.params.id,
         user: this.$store.state.user,

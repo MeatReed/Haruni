@@ -149,8 +149,8 @@ module.exports = async (client) => {
         .channels.cache.get(process.env.DEFAULT_TEXTCHANNEL_ID)
       try {
         if (!client.lavaClient.playerCollection.get(guildID)) {
-          client.lavaClient.spawnPlayer(client.lavaClient, {
-            guild: guildID,
+          client.lavaClient.spawnPlayer({
+            guild,
             voiceChannel: member.voice.channel,
             textChannel,
             deafen: true,
@@ -326,7 +326,10 @@ module.exports = async (client) => {
       }
       const guildID = data.guildID
       const seekNumber = data.seekNumber
-      if (!guildID && !seekNumber) {
+      if (!guildID) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      } else if (!seekNumber) {
         socket.emit('errorMessage', 'One value is missing.')
         return
       }
@@ -362,7 +365,10 @@ module.exports = async (client) => {
       }
       const guildID = data.guildID
       const volumeNumber = data.volumeNumber
-      if (!guildID && !volumeNumber) {
+      if (!guildID) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      } else if (!volumeNumber) {
         socket.emit('errorMessage', 'One value is missing.')
         return
       }
@@ -390,6 +396,49 @@ module.exports = async (client) => {
       }
     })
 
+    socket.on('setEqualizer', async (data) => {
+      const user = data.user
+      if (!user) {
+        socket.emit('errorMessage', 'You are not connected!')
+        return
+      }
+      const guildID = data.guildID
+      const band = parseInt(data.band)
+      const gain = data.gain
+      if (!guildID) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      } else if (!gain) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      } else if (!band) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      }
+      const guild = client.guilds.cache.get(guildID)
+      if (!guild) {
+        socket.emit('errorMessage', 'The guild does not exist.')
+        return
+      }
+      const player = client.lavaClient.playerCollection.get(guildID)
+      if (!player) {
+        socket.emit(
+          'errorMessage',
+          'The bot is not connected to a voiceChannel!'
+        )
+        return
+      }
+      try {
+        await player.EQBands(band ,gain)
+        socket.emit('successMessage', `test`)
+        return
+      } catch (error) {
+        if (error) {
+          socket.emit('errorMessage', 'An error has occurred.')
+        }
+      }
+    })
+
     socket.on('lavaSearch', async (data) => {
       const user = data.user
       if (!user) {
@@ -398,7 +447,10 @@ module.exports = async (client) => {
       }
       const guildID = data.guildID
       const query = data.query
-      if (!guildID && !query) {
+      if (!guildID) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      } else if (!query) {
         socket.emit('errorMessage', 'One value is missing.')
         return
       }
@@ -427,6 +479,7 @@ module.exports = async (client) => {
           socket.emit('searchSongs', songs)
           return
         } else {
+          console.log('here 1')
           socket.emit('errorMessage', 'No track found.')
           return
         }
@@ -445,7 +498,10 @@ module.exports = async (client) => {
       }
       const guildID = data.guildID
       const uri = data.uri
-      if (!guildID && !uri) {
+      if (!guildID) {
+        socket.emit('errorMessage', 'One value is missing.')
+        return
+      } else if (!uri) {
         socket.emit('errorMessage', 'One value is missing.')
         return
       }
@@ -470,11 +526,11 @@ module.exports = async (client) => {
           },
           true
         )
-        if (songs.title) {
+        if (songs[0].title) {
           if (!player.playing) {
             player.play()
           }
-          socket.emit('successMessage', `${songs.title} added!`)
+          socket.emit('successMessage', `${songs[0].title} added!`)
           return
         } else {
           socket.emit('errorMessage', 'No track found.')
