@@ -102,7 +102,7 @@ module.exports = class HelpCommand extends BaseCommand {
       }
     } catch (error) {
       client.ErrorEmbed(
-        message,
+        message.channel,
         'An error has occurred : \n```JS\n' + error.message + '```'
       )
     }

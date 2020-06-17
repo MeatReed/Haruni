@@ -58,6 +58,7 @@
           color="success"
           :disabled="!player.queue[0]"
           fab
+          small
           @click="dialogEQ = true"
         >
           EQ
@@ -457,6 +458,7 @@ export default {
         user: this.$store.state.user,
         musicNumber: this.selectMusic.index,
       })
+      this.dialogMusic = false
     },
     removeMusicQueue() {
       if (!this.selectMusic.index) return
@@ -465,6 +467,7 @@ export default {
         user: this.$store.state.user,
         musicNumber: this.selectMusic.index,
       })
+      this.dialogMusic = false
     },
     setEQDefault() {
       this.socket.emit('setEqualizerDefault', {

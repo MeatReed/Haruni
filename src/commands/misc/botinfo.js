@@ -57,7 +57,10 @@ module.exports = class BotInfoCommand extends BaseCommand {
         embed: {
           color: 0xB1072E,
           footer: {
-            icon_url: message.author.avatarURL(),
+            icon_url: message.author.avatarURL({
+              format: 'png',
+              size: 4096,
+            }),
             text: 'Requested by ' + message.author.tag,
           },
           thumbnail: {
@@ -134,7 +137,7 @@ module.exports = class BotInfoCommand extends BaseCommand {
       })
     } catch (error) {
       client.ErrorEmbed(
-        message,
+        message.channel,
         'An error has occurred : \n```JS\n' + error.message + '```'
       )
     }
