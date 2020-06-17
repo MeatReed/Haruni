@@ -162,21 +162,30 @@
         </v-card-title>
 
         <v-card-text>
-          <v-slider v-model="valueBand" max="14" label="Band" />
+          <v-slider
+            v-model="valueBand"
+            max="14"
+            label="Band"
+            thumb-label="always"
+          />
           <v-slider
             v-model="valueGain"
-            :step="0.01"
+            :step="0.05"
             max="1"
             min="-0.25"
             label="Gain"
+            thumb-label="always"
           />
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
+          <v-btn color="primary" text @click="setEQDefault">
+            Default
+          </v-btn>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="dialogMusic = false">
+          <v-btn color="primary" text @click="dialogEQ = false">
             Close
           </v-btn>
         </v-card-actions>
@@ -283,8 +292,8 @@ export default {
         tracks: null,
       },
       selectItemVideo: null,
-      valueGain: null,
-      valueBand: null,
+      valueGain: 0,
+      valueBand: 0,
       dialogEQ: false,
     }
   },
@@ -320,7 +329,6 @@ export default {
       })
     },
     valueGain(value) {
-      console.log(value)
       this.socket.emit('setEqualizer', {
         guildID: this.$route.params.id,
         user: this.$store.state.user,
@@ -431,6 +439,14 @@ export default {
     selectMusicBtn(row, i) {
       this.selectMusic = row
       this.dialogMusic = true
+    },
+    setEQDefault() {
+      this.socket.emit('setEqualizerDefault', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+      })
+      this.valueGain = 0
+      this.valueBand = 0
     },
     duration(ms) {
       return moment.duration({

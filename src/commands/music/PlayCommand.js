@@ -130,7 +130,6 @@ module.exports = class PlayCommand extends BaseCommand {
     if (!player.playing) {
       player.play()
     } else if (!search.tracks) {
-      console.log(player)
       if (!song) {
         song = search
       }
