@@ -110,6 +110,7 @@ module.exports = async (client) => {
       }
       const player = client.lavaClient.playerCollection.get(guildID)
       if (!player) {
+        socket.emit('sendPlayer', undefined)
         socket.emit(
           'errorMessage',
           'The bot is not connected to a voiceChannel!'

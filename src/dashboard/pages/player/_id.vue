@@ -62,41 +62,43 @@
         >
           EQ
         </v-btn>
-        <v-btn
-          v-if="player"
-          color="success"
-          :disabled="!player.queue[0]"
-          @click="replay"
-          >Replay</v-btn
-        >
-        <v-btn
-          v-if="player"
-          color="success"
-          :disabled="!player.queue[0]"
-          @click="pause"
-          >{{ player.playPaused ? 'Resume' : 'Pause' }}</v-btn
-        >
-        <v-btn
-          v-if="player"
-          :color="player.repeatTrack ? 'success' : 'error'"
-          :disabled="!player.queue[0]"
-          @click="loop"
-          >Loop</v-btn
-        >
-        <v-btn
-          v-if="player"
-          color="success"
-          :disabled="!player.queue[0]"
-          @click="skip"
-          >Skip</v-btn
-        >
-        <v-btn
-          v-if="player"
-          color="success"
-          :disabled="!player.queue[0]"
-          @click="stop"
-          >Stop</v-btn
-        >
+        <v-btn-toggle dense>
+          <v-btn
+            v-if="player"
+            color="success"
+            :disabled="!player.queue[0]"
+            @click="replay"
+            >Replay</v-btn
+          >
+          <v-btn
+            v-if="player"
+            color="success"
+            :disabled="!player.queue[0]"
+            @click="pause"
+            >{{ player.playPaused ? 'Resume' : 'Pause' }}</v-btn
+          >
+          <v-btn
+            v-if="player"
+            :color="player.repeatTrack ? 'success' : 'error'"
+            :disabled="!player.queue[0]"
+            @click="loop"
+            >Loop</v-btn
+          >
+          <v-btn
+            v-if="player"
+            color="success"
+            :disabled="!player.queue[0]"
+            @click="skip"
+            >Skip</v-btn
+          >
+          <v-btn
+            v-if="player"
+            color="success"
+            :disabled="!player.queue[0]"
+            @click="stop"
+            >Stop</v-btn
+          >
+        </v-btn-toggle>
         <v-menu v-if="player" offset-y>
           <template v-slot:activator="{ on, attrs }">
             <v-btn
@@ -357,6 +359,10 @@ export default {
       reconnection: true,
     })
     this.socket.on('sendPlayer', (data) => {
+      if (!data) {
+        this.player = data
+        return
+      }
       this.player = data
       if (data.queue[0]) {
         this.playerBar = (data.position / data.queue[0].length) * 100
