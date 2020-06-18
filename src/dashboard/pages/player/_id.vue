@@ -55,7 +55,6 @@
         >
         <v-btn
           v-if="player"
-          color="success"
           :disabled="!player.queue[0]"
           fab
           small

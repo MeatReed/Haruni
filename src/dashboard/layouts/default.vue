@@ -56,6 +56,11 @@ export default {
           title: 'Home',
           to: '/',
         },
+        {
+          icon: 'mdi-play',
+          title: 'Player',
+          to: '/player',
+        },
       ],
       title: 'Haruni Player',
     }
