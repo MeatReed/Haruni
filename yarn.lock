@@ -2,10 +2,9 @@
 # yarn lockfile v1
 
 
-"@anonymousg/lavajs@^3.1.0":
+"@anonymousg/lavajs@git+https://github.com/MeatReed/LavaJS.git":
   version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@anonymousg/lavajs/-/lavajs-3.1.0.tgz#03dc48778740320f9ba6590d97c478903fd14a13"
-  integrity sha512-H9dQFwv/UglI/JlyVx8BueO1KKxpSaY4qk1lpvHuxsCZ+5ibZm1YrDxMvtsY+19bpF48s3311FIRgzmTpPQPow==
+  resolved "git+https://github.com/MeatReed/LavaJS.git#284c9eb1dbf54cf5ee2ec775fcde793ec9b96553"
   dependencies:
     events "^3.1.0"
     node-fetch "^2.6.0"

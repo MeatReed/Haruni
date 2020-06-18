@@ -5,7 +5,7 @@ module.exports = class PlayerWebCommand extends BaseCommand {
     super({
       name: 'playerweb',
       description: '',
-      category: 'music',
+      category: 'misc',
       usage: 'playerweb',
       enabled: true,
       guildOnly: true,
