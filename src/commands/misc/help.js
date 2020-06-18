@@ -21,12 +21,13 @@ module.exports = class HelpCommand extends BaseCommand {
     try {
       const ownerUser = client.getOwner()
       if (!args[0]) {
-        const output = `Use \`${client.prefix}help {command name's}\` for more details.\n[] = Required\n{} = Not Required\n\n`
+        const output = `**For a more enjoyable experience with more functionality use the site!**\nUse \`${client.prefix}help {command name's}\` for more details.\n[] = Required\n{} = Not Required\n\n`
 
         const Embed = new Discord.MessageEmbed()
           .setColor('0xb1072e')
           .setTitle('List of commands')
           .setDescription(output)
+          .setImage('https://i.imgur.com/oeHN1ph.png')
           .setThumbnail(client.user.avatarURL())
           .setAuthor(
             `${ownerUser.tag}`,
@@ -64,7 +65,7 @@ module.exports = class HelpCommand extends BaseCommand {
 
         Embed.addField(
           'Useful links',
-          '[Invitation](https://discord.com/api/oauth2/authorize?client_id=722181826545713313&permissions=1609887095&scope=bot)'
+          `[Invitation](https://discord.com/api/oauth2/authorize?client_id=722181826545713313&permissions=1609887095&scope=bot) - [Support](https://discord.gg/RBRqCyg) - [Website](${process.env.BASE_URL})`
         )
 
         message.channel.send(Embed)
