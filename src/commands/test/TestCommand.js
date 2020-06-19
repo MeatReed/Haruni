@@ -10,7 +10,7 @@ module.exports = class TestCommand extends BaseCommand {
       enabled: true,
       guildOnly: true,
       nsfw: false,
-      ownerOnly: false,
+      ownerOnly: true,
       aliases: [],
       userPermissions: [],
       clientPermissions: [],
