@@ -112,7 +112,7 @@
             </v-btn>
           </template>
           <v-card>
-            <v-slider v-model="volume" vertical />
+            <v-slider v-model="volume" vertical @end="setVolume" />
           </v-card>
         </v-menu>
       </v-col>
@@ -169,6 +169,11 @@
         <v-card-title>
           Filters
         </v-card-title>
+        <v-card-text>
+          <v-alert type="warning">
+            Changes can take time.
+          </v-alert>
+        </v-card-text>
         <v-tabs v-model="filtersModel" centered slider-color="yellow">
           <v-tab :href="`#tab-equalizer`">
             Equalizer
@@ -285,10 +290,13 @@
         <v-divider></v-divider>
 
         <v-card-actions>
-          <v-btn color="primary" text @click="setEQDefault">
+          <v-btn color="primary" text @click="setFiltersDefault">
             Default
           </v-btn>
           <v-spacer></v-spacer>
+          <v-btn color="primary" text @click="saveFilters">
+            Save
+          </v-btn>
           <v-btn color="primary" text @click="dialogEQ = false">
             Close
           </v-btn>
@@ -383,7 +391,7 @@ export default {
       snackbarColor: 'success',
       snackbarText: null,
       playerBar: null,
-      volume: null,
+      volume: 0,
       showVolumeSlide: false,
       headersQueue: [
         {
@@ -436,332 +444,28 @@ export default {
       }
       this.selectItemVideo = null
     },
-    volume(value) {
-      this.socket.emit('setVolume', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        volumeNumber: value,
-      })
-    },
-    valueBands(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: value,
-          },
-          /* karaoke: {
-            level: this.valuemonoLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valueGain(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: value,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valuemonoLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valueLevelKaraoke(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: value,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valuemonoLevelKaraoke(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: value,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valuefilterBandKaraoke(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: value,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valuefilterWidthKaraoke(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: value,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valueSpeedTimescale(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: value,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valuePitchTimescale(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: value,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valueRateTimescale(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: value,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valueFrequencyTremolo(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: value,
-            depth: this.valueDepthTremolo,
-          },
-        },
-      })
-    },
-    valueDepthTremolo(value) {
-      this.socket.emit('sendFilters', {
-        guildID: this.$route.params.id,
-        user: this.$store.state.user,
-        send: {
-          equalizer: {
-            gain: this.valueGain,
-            bands: this.valueBands,
-          },
-          /* karaoke: {
-            level: this.valueLevelKaraoke,
-            monoLevel: this.valuemonoLevelKaraoke,
-            filterBand: this.valuefilterBandKaraoke,
-            filterWidth: this.valuefilterWidthKaraoke,
-          }, */
-          timescale: {
-            speed: this.valueSpeedTimescale,
-            pitch: this.valuePitchTimescale,
-            rate: this.valueRateTimescale,
-          },
-          tremolo: {
-            fequency: this.valueFrequencyTremolo,
-            depth: value,
-          },
-        },
-      })
-    },
   },
   mounted() {
-    const context = this
-    setInterval(function () {
-      context.socket.emit('getPlayer', {
-        guildID: context.$route.params.id,
-      })
-    }, 1550)
     this.socket = this.$nuxtSocket({
       name: 'player',
       channel: '/',
       reconnection: true,
     })
-    this.socket.on('sendPlayer', (data) => {
-      if (!data) {
-        this.player = data
-        return
-      }
+    this.socket.emit('getPlayer', {
+      guildID: this.$route.params.id,
+    })
+    this.socket.on('createPlayer/' + this.$route.params.id, (data) => {
       this.player = data
-      if (data.queue[0]) {
-        this.playerBar = (data.position / data.queue[0].length) * 100
-      }
+      this.playerBar = data.queue[0]
+        ? (data.position / data.queue[0].length) * 100
+        : 0
+      this.volume = data.volume
+    })
+    this.socket.on('sendPlayer/' + this.$route.params.id, (data) => {
+      this.player = data
+      this.playerBar = data.queue[0]
+        ? (data.position / data.queue[0].length) * 100
+        : 0
       this.volume = data.volume
     })
     this.socket.on('errorMessage', (data) => {
@@ -871,10 +575,16 @@ export default {
       })
       this.dialogMusic = false
     },
-    setEQDefault() {
-      this.socket.emit('setEqualizerDefault', {
+    setFiltersDefault() {
+      this.socket.emit('sendFilters', {
         guildID: this.$route.params.id,
         user: this.$store.state.user,
+        send: {
+          equalizer: null,
+          /* karaoke: null, */
+          timescale: null,
+          tremolo: null,
+        },
       })
       this.valueGain = 0
       this.valueBands = 0
@@ -882,11 +592,45 @@ export default {
       this.valuePitchTimescale = 1
       this.valueRateTimescale = 1
       this.valueFrequencyTremolo = 0
-      this.valueDepthTremolo = 0
+      this.valueDepthTremolo = 0.1
     },
     duration(ms) {
       return moment.duration({
         ms,
+      })
+    },
+    setVolume(value) {
+      this.socket.emit('setVolume', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        volumeNumber: value,
+      })
+    },
+    saveFilters() {
+      this.socket.emit('sendFilters', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        send: {
+          equalizer: {
+            gain: this.valueGain,
+            bands: this.valueBands,
+          },
+          /* karaoke: {
+            level: this.valuemonoLevelKaraoke,
+            monoLevel: this.valuemonoLevelKaraoke,
+            filterBand: this.valuefilterBandKaraoke,
+            filterWidth: this.valuefilterWidthKaraoke,
+          }, */
+          timescale: {
+            speed: this.valueSpeedTimescale,
+            pitch: this.valuePitchTimescale,
+            rate: this.valueRateTimescale,
+          },
+          tremolo: {
+            fequency: this.valueFrequencyTremolo,
+            depth: this.valueDepthTremolo,
+          },
+        },
       })
     },
   },

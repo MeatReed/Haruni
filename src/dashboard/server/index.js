@@ -97,6 +97,22 @@ module.exports = async (client) => {
   const io = require('socket.io')(server)
 
   io.on('connection', (socket) => {
+    client.lavaClient.on('createPlayer', (player) => {
+      const playerCloned = Object.assign({}, player)
+      delete playerCloned.client
+      delete playerCloned.node
+      delete playerCloned.lavaJS
+      socket.emit('createPlayer/' + player.options.guild.id, playerCloned)
+    })
+
+    client.lavaClient.on('playerUpdate', (player) => {
+      const playerCloned = Object.assign({}, player)
+      delete playerCloned.client
+      delete playerCloned.node
+      delete playerCloned.lavaJS
+      socket.emit('sendPlayer/' + player.options.guild.id, playerCloned)
+    })
+
     socket.on('getPlayer', (data) => {
       const guildID = data.guildID
       if (!guildID) {
@@ -110,7 +126,7 @@ module.exports = async (client) => {
       }
       const player = client.lavaClient.playerCollection.get(guildID)
       if (!player) {
-        socket.emit('sendPlayer', undefined)
+        socket.emit('sendPlayer', null)
         socket.emit(
           'errorMessage',
           'The bot is not connected to a voiceChannel!'
@@ -121,7 +137,7 @@ module.exports = async (client) => {
       delete playerCloned.client
       delete playerCloned.node
       delete playerCloned.lavaJS
-      socket.emit('sendPlayer', playerCloned)
+      socket.emit('sendPlayer/' + guildID, playerCloned)
     })
 
     socket.on('connectPlayer', (data) => {
@@ -231,7 +247,7 @@ module.exports = async (client) => {
       }
       try {
         if (!player.repeatTrack) {
-          player.repeatTrack = true
+          player.toggleRepeat('track')
           socket.emit(
             'successMessage',
             `Loop activated, ${player.queue[0].title} music will repeat.`
@@ -394,43 +410,6 @@ module.exports = async (client) => {
       }
     })
 
-    socket.on('setEqualizer', async (data) => {
-      const user = data.user
-      if (!user) {
-        socket.emit('errorMessage', 'You are not connected!')
-        return
-      }
-      const guildID = data.guildID
-      const bands = parseInt(data.bands)
-      const gain = data.gain
-      if (!guildID) {
-        socket.emit('errorMessage', 'One value is missing.')
-        return
-      }
-      const guild = client.guilds.cache.get(guildID)
-      if (!guild) {
-        socket.emit('errorMessage', 'The guild does not exist.')
-        return
-      }
-      const player = client.lavaClient.playerCollection.get(guildID)
-      if (!player) {
-        socket.emit(
-          'errorMessage',
-          'The bot is not connected to a voiceChannel!'
-        )
-        return
-      }
-      try {
-        await player.EQBands(bands, gain)
-        socket.emit('successMessage', `Bands: ${bands}\nGain: ${gain}`)
-        return
-      } catch (error) {
-        if (error) {
-          socket.emit('errorMessage', 'An error has occurred.')
-        }
-      }
-    })
-
     socket.on('sendFilters', async (data) => {
       const user = data.user
       if (!user) {
@@ -439,7 +418,7 @@ module.exports = async (client) => {
       }
       const guildID = data.guildID
       const sendData = data.send
-      if (!guildID || !sendData) {
+      if (!guildID) {
         socket.emit('errorMessage', 'One value is missing.')
         return
       }
@@ -458,41 +437,7 @@ module.exports = async (client) => {
       }
       try {
         await player.sendFilters(sendData)
-        return
-      } catch (error) {
-        if (error) {
-          socket.emit('errorMessage', 'An error has occurred.')
-        }
-      }
-    })
-
-    socket.on('setEqualizerDefault', async (data) => {
-      const user = data.user
-      if (!user) {
-        socket.emit('errorMessage', 'You are not connected!')
-        return
-      }
-      const guildID = data.guildID
-      if (!guildID) {
-        socket.emit('errorMessage', 'One value is missing.')
-        return
-      }
-      const guild = client.guilds.cache.get(guildID)
-      if (!guild) {
-        socket.emit('errorMessage', 'The guild does not exist.')
-        return
-      }
-      const player = client.lavaClient.playerCollection.get(guildID)
-      if (!player) {
-        socket.emit(
-          'errorMessage',
-          'The bot is not connected to a voiceChannel!'
-        )
-        return
-      }
-      try {
-        await player.EQBands()
-        socket.emit('successMessage', `Default Equalizer`)
+        socket.emit('successMessage', `Filters set!`)
         return
       } catch (error) {
         if (error) {
@@ -532,7 +477,6 @@ module.exports = async (client) => {
         return
       } catch (error) {
         if (error) {
-          console.log(error)
           socket.emit('errorMessage', 'An error has occurred.')
         }
       }
@@ -565,10 +509,10 @@ module.exports = async (client) => {
       }
       try {
         await player.queue.remove(musicNumber)
+        socket.emit('successMessage', `Music removed!`)
         return
       } catch (error) {
         if (error) {
-          console.log(error)
           socket.emit('errorMessage', 'An error has occurred.')
         }
       }
@@ -614,7 +558,6 @@ module.exports = async (client) => {
           socket.emit('searchSongs', songs)
           return
         } else {
-          console.log('here 1')
           socket.emit('errorMessage', 'No track found.')
           return
         }
