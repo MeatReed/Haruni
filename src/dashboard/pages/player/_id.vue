@@ -451,6 +451,10 @@ export default {
       channel: '/',
       reconnection: true,
     })
+    this.socket.on('destroyPlayer/' + this.$route.params.id, (data) => {
+      this.player = null
+      this.playerBar = 0
+    })
     this.socket.emit('getPlayer', {
       guildID: this.$route.params.id,
     })

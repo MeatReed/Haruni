@@ -113,6 +113,10 @@ module.exports = async (client) => {
       socket.emit('sendPlayer/' + player.options.guild.id, playerCloned)
     })
 
+    client.lavaClient.on('destroyPlayer', (player) => {
+      socket.emit('destroyPlayer/' + player.options.guild.id)
+    })
+
     socket.on('getPlayer', (data) => {
       const guildID = data.guildID
       if (!guildID) {
@@ -380,9 +384,6 @@ module.exports = async (client) => {
       const guildID = data.guildID
       const volumeNumber = data.volumeNumber
       if (!guildID) {
-        socket.emit('errorMessage', 'One value is missing.')
-        return
-      } else if (!volumeNumber) {
         socket.emit('errorMessage', 'One value is missing.')
         return
       }
