@@ -5,7 +5,7 @@ module.exports = class TestCommand extends BaseCommand {
     super({
       name: 'test',
       description: '',
-      category: 'test',
+      category: 'dev',
       usage: '',
       enabled: true,
       guildOnly: true,

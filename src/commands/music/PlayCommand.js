@@ -45,7 +45,7 @@ module.exports = class PlayCommand extends BaseCommand {
       if (!message.guild.me.voice.channel) {
         client.SuccessEmbed(
           message.channel,
-          `The bot has successfully joined the vocalchannel **${message.member.voice.channel.toString()}**`
+          `The bot has successfully joined the voice channel **${message.member.voice.channel.toString()}**`
         )
       }
     }
@@ -111,7 +111,7 @@ module.exports = class PlayCommand extends BaseCommand {
           })
           collector.on('end', (collected, reason) => {
             if (reason === 'STOPPED') {
-              client.SuccessEmbed(message, 'You canceled.')
+              client.SuccessEmbed(message.channel, 'You canceled.')
             } else if (reason === 'PLAY') {
             } else {
               client.ErrorEmbed(message.channel, 'Too long to choose!')
@@ -142,7 +142,7 @@ module.exports = class PlayCommand extends BaseCommand {
           color: 16711717,
           timestamp: new Date(),
           thumbnail: {
-            url: search.thumbnail.standard,
+            url: search.thumbnail.max,
           },
           fields: [
             {

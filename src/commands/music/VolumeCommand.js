@@ -24,19 +24,22 @@ module.exports = class VolumeCommand extends BaseCommand {
       return
     }
     const player = client.lavaClient.playerCollection.get(message.guild.id)
-    if (!player) {
+    if (!player || !player.queue[0]) {
       client.InfoEmbed(message.channel, "The bot doesn't currently play music.")
       return
     }
     if (message.guild.me.voice.channel.id !== message.member.voice.channel.id) {
       client.InfoEmbed(
         message.channel,
-        "You're not in the same vocalchannel as bot!"
+        "You're not in the same voice channel as bot!"
       )
       return
     }
     if (!volume) {
-      message.channel.send(`Volume is currently at ${player.volume}%`)
+      client.InfoEmbed(
+        message.channel,
+        `Volume is currently at ${player.volume}%`
+      )
       return
     } else if (volume < 0 || volume > 100) {
       client.InfoEmbed(message.channel, 'Volume must be in between 0 and 100')
@@ -44,7 +47,7 @@ module.exports = class VolumeCommand extends BaseCommand {
     }
     try {
       player.setVolume(volume)
-      client.SuccessEmbed(message.channel, `Volume at ${player.volume}%`)
+      client.SuccessEmbed(message.channel, `Volume at ${volume}%`)
     } catch (error) {
       if (error) {
         client.ErrorEmbed(
