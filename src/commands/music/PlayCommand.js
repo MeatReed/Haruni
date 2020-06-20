@@ -90,6 +90,8 @@ module.exports = class PlayCommand extends BaseCommand {
             const choice = msgCollected.content.split(' ')[0]
             if (choice.toLowerCase() === 'cancel') {
               collector.stop('STOPPED')
+              m.delete()
+              msgCollected.delete()
               return
             }
             if (!choice || isNaN(choice)) {
@@ -142,7 +144,7 @@ module.exports = class PlayCommand extends BaseCommand {
           color: 16711717,
           timestamp: new Date(),
           thumbnail: {
-            url: search.thumbnail.max,
+            url: search.thumbnail.default,
           },
           fields: [
             {

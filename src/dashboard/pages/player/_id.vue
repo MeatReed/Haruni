@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row v-if="player && player.queue[0]" justify="center">
-      <v-img :src="player.queue[0].thumbnail.max" max-width="250"></v-img>
+      <v-img :src="player.queue[0].thumbnail.default" max-width="250"></v-img>
     </v-row>
     <v-row>
       <v-col>
@@ -138,7 +138,7 @@
     </div>
     <v-dialog v-if="selectMusic" v-model="dialogMusic" width="500">
       <v-card>
-        <v-img :src="selectMusic.info.thumbnail.max" />
+        <v-img :src="selectMusic.info.thumbnail.default" />
         <v-card-title>
           {{ selectMusic.info.title }}
         </v-card-title>
