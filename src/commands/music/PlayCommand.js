@@ -150,7 +150,7 @@ module.exports = class PlayCommand extends BaseCommand {
           color: 16711717,
           timestamp: new Date(),
           thumbnail: {
-            url: song.thumbnail.default,
+            url: song.thumbnail.max,
           },
           fields: [
             {

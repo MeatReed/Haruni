@@ -31,7 +31,8 @@
     "nuxt-socket-io": "^1.1.1",
     "passport": "^0.4.1",
     "passport-discord": "^0.1.4",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "vue-discord-message": "^4.0.0"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^3.0.0",

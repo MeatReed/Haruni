@@ -4259,6 +4259,11 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
+hex-to-rgba@^1.0.1:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/hex-to-rgba/-/hex-to-rgba-1.0.2.tgz#1273dc05a499ddc955b80220ae04dcf542decfec"
+  integrity sha512-fL+4NFccs86iOuDnFl1Mhyn471qTPAkpE7k39+JYGPMB3+S9LoUnauQI2nz6BUb3DpYQCx8RqENbaf8IFdKYOg==
+
 hmac-drbg@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/hmac-drbg/-/hmac-drbg-1.0.1.tgz#d2745701025a6c775a6c545793ed502fc0c649a1"
@@ -8388,6 +8393,13 @@ vue-client-only@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/vue-client-only/-/vue-client-only-2.0.0.tgz#ddad8d675ee02c761a14229f0e440e219de1da1c"
   integrity sha512-arhk1wtWAfLsJyxGMoEYhoBowM87/i6HLSG2LH/03Yog6i2d9JEN1peMP0Ceis+/n9DxdenGYZZTxbPPJyHciA==
+
+vue-discord-message@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/vue-discord-message/-/vue-discord-message-4.0.0.tgz#dc1918f6abd2d330694857d6b90e94e3d20d4d13"
+  integrity sha512-3/UA655lrwrRgzZAmVcnHJ+36yQJx4KlrsN7leRSkjffX9bg0vcV0h7zWGMi/C64UWbLe7thOJgxX1lJaxZteA==
+  dependencies:
+    hex-to-rgba "^1.0.1"
 
 vue-eslint-parser@^7.0.0:
   version "7.1.0"

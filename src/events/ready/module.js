@@ -30,11 +30,11 @@ module.exports = class ReadyEvent extends BaseEvent {
         })
         player.options.textChannel.send({
           embed: {
-            description: `Playing : [${player.queue[0].title}](${player.queue[0].uri}) !`,
+            description: `Playing: [${player.queue[0].title}](${player.queue[0].uri}) !`,
             color: 16711717,
             timestamp: new Date(),
             thumbnail: {
-              url: player.queue[0].thumbnail.standard,
+              url: player.queue[0].thumbnail.max,
             },
             fields: [
               {
