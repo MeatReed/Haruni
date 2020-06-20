@@ -65,6 +65,9 @@ module.exports = class PlayCommand extends BaseCommand {
         message.channel,
         `\`${search.tracks.length}\` musics have been added.`
       )
+      if (!player.playing) {
+        player.play()
+      }
     } else if (search.length > 1) {
       let msg = search
         .slice(0, 9)
@@ -109,7 +112,9 @@ module.exports = class PlayCommand extends BaseCommand {
             queue.add(song)
             if (!player.playing) {
               player.play()
+              return
             }
+            sendMessage(song)
           })
           collector.on('end', (collected, reason) => {
             if (reason === 'STOPPED') {
@@ -128,32 +133,33 @@ module.exports = class PlayCommand extends BaseCommand {
             )
           }
         })
-    }
-    if (!player.playing) {
-      player.play()
-    } else if (!search.tracks) {
-      if (!song) {
-        song = search
+    } else if (search.length <= 1) {
+      if (!player.playing) {
+        player.play()
+        return
       }
+      sendMessage(search[0])
+    }
+    function sendMessage(song) {
       const duration = moment.duration({
-        ms: search.length,
+        ms: song.length,
       })
       message.channel.send({
         embed: {
-          description: `Adding music [${search.title}](${search.uri}) !`,
+          description: `Adding music [${song.title}](${song.uri}) !`,
           color: 16711717,
           timestamp: new Date(),
           thumbnail: {
-            url: search.thumbnail.default,
+            url: song.thumbnail.default,
           },
           fields: [
             {
               name: 'Author',
-              value: search.author,
+              value: song.author,
             },
             {
               name: 'Requested by',
-              value: search.user.tag,
+              value: song.user.tag,
             },
             {
               name: 'Duration',
