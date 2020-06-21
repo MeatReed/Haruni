@@ -1,48 +1,24 @@
 {
-  "name": "Haruni",
+  "name": "testtsc",
   "version": "1.0.0",
-  "description": "Haruni is a Discord bot specializing in music! It has an online player to control the music from a website.",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/bot.js",
-    "start": "node ./src/bot.js",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "nuxt:build": "nuxt build ./src/dashboard"
+    "dev": "nodemon --exec ts-node src/bot.ts",
+    "start": "node ./build/bot.js",
+    "build": "tsc --build"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@anonymousg/lavajs": "git+https://github.com/MeatReed/LavaJS.git",
-    "@nuxtjs/axios": "^5.11.0",
-    "@nuxtjs/dotenv": "^1.4.1",
-    "body-parser": "^1.19.0",
-    "cross-env": "^7.0.2",
-    "discord-paginationembed": "^2.0.0",
+    "@types/node": "^14.0.13",
     "discord.js": "^12.2.0",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-session": "^1.17.1",
-    "http": "^0.0.1-security",
-    "memorystore": "^1.6.2",
-    "moment": "^2.26.0",
-    "nuxt": "^2.12.2",
-    "nuxt-socket-io": "^1.1.1",
-    "passport": "^0.4.1",
-    "passport-discord": "^0.1.4",
-    "socket.io": "^2.3.0",
-    "vue-discord-message": "^4.0.0"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "@nuxtjs/eslint-config": "^3.0.0",
-    "@nuxtjs/eslint-module": "^2.0.0",
-    "@nuxtjs/vuetify": "^1.11.2",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.2.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-nuxt": "^1.0.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.0.5"
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
   }
 }
