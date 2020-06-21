@@ -1,6 +1,7 @@
 import { Message, MessageCollector, TextChannel, DMChannel } from 'discord.js';
 import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
+import { Track } from '../../utils/modules/lavajs/src/utils/Interfaces';
 
 export default class TestCommand extends BaseCommand {
   constructor() {
@@ -127,7 +128,7 @@ export default class TestCommand extends BaseCommand {
       }
       sendMessage(search[0])
     }
-    function sendMessage(song) {
+    function sendMessage(song: Track) {
       message.channel.send({
         embed: {
           description: `Adding music [${song.title}](${song.uri}) !`,
