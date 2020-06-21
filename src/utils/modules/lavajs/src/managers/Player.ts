@@ -1,14 +1,13 @@
-"use strict";
-
-import { Queue } from "./Queue";
+import fetch from "node-fetch";
 import { LavaClient } from "./LavaClient";
 import { LavaNode } from "./LavaNode";
+import { Queue } from "./Queue";
 import { Utils } from "../utils/Utils";
-import fetch from "node-fetch";
+import { Cache } from "../utils/Cache";
 import { PlayerOptions, Playlist, Track } from "../utils/Interfaces";
 import { User, VoiceChannel } from "discord.js";
 
-class Player {
+export class Player {
   /**
    * The LavaClient instance
    */
@@ -28,7 +27,7 @@ class Player {
   /**
    * The band collection
    */
-  public readonly bands: Map<number, { band: number; gain: number }>;
+  public readonly bands: Cache<number, { band: number; gain: number }>;
   /**
    * Whether the player has a loaded track
    */
@@ -36,11 +35,11 @@ class Player {
   /**
    * The position of the track
    */
-  public position: number = 0;
+  public position: number;
   /**
    * The player volume
    */
-  public volume: number = 100;
+  public volume: number;
   /**
    * Whether to repeat the current track
    */
@@ -56,7 +55,7 @@ class Player {
   /**
    * Whether the player is paused
    */
-  public playPaused: boolean = false;
+  public playPaused: boolean;
 
   /**
    * The player class which plays the music
@@ -78,7 +77,7 @@ class Player {
     this.skipOnError = options.skipOnError || false;
 
     this.queue = new Queue(this);
-    this.bands = new Map();
+    this.bands = new Cache<number, { band: number; gain: number }>();
 
     // Set the bands default
     for (let i = 0; i < 15; i++) {
@@ -125,17 +124,14 @@ class Player {
     if (type === "track") {
       this.repeatTrack = true;
       this.repeatQueue = false;
-      this.lavaJS.emit("playerUpdate", this);
       return this.repeatTrack;
     } else if (type === "queue") {
       this.repeatQueue = true;
       this.repeatTrack = false;
-      this.lavaJS.emit("playerUpdate", this);
       return this.repeatQueue;
     } else {
       this.repeatQueue = false;
       this.repeatTrack = false;
-      this.lavaJS.emit("playerUpdate", this);
       return false;
     }
   }
@@ -190,12 +186,13 @@ class Player {
    * Play the next track in the queue
    */
   public play(): void {
-    if (this.queue.size <= 0)
+    if (this.queue.empty)
       throw new RangeError(`Player#play() No tracks in the queue.`);
     if (this.playing) {
       return this.stop();
     }
-    const track: Track = this.queue[0];
+
+    const track: Track = this.queue.first;
     this.node
       .wsSend({
         op: "play",
@@ -225,12 +222,9 @@ class Player {
         ? query
         : `ytsearch:${query}`;
 
-      const params = new URLSearchParams()
-      params.append('identifier', search)
-
       const { loadType, playlistInfo, tracks, exception } = await (
         await fetch(
-          `http://${this.node.options.host}:${this.node.options.port}/loadtracks?${params}`,
+          `http://${this.node.options.host}:${this.node.options.port}/loadtracks?identifier=${search}`,
           {
             headers: { Authorization: this.node.options.password },
           }
@@ -259,7 +253,7 @@ class Player {
           break;
 
         case "SEARCH_RESULT":
-          const res: Track[] = tracks.map((t) => Utils.newTrack(t, user));
+          const res: Track[] = tracks.map((t: any) => Utils.newTrack(t, user));
           resolve(res);
           break;
 
@@ -347,9 +341,9 @@ class Player {
       throw new RangeError(
         `Player#seek() The provided position is not a number.`
       );
-    if (position < 0 || position > this.queue[0].length)
+    if (position < 0 || position > this.queue.first.length)
       throw new RangeError(
-        `Player#seek() The provided position must be in between 0 and ${this.queue[0].length}.`
+        `Player#seek() The provided position must be in between 0 and ${this.queue.first.length}.`
       );
 
     this.position = position;
@@ -417,5 +411,3 @@ class Player {
     this.lavaJS.emit("destroyPlayer", this);
   }
 }
-
-export { Player };

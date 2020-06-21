@@ -1,13 +1,12 @@
-"use strict";
-
 import { EventEmitter } from "events";
 import { LavaNode } from "./LavaNode";
 import { Player } from "./Player";
+import { Cache } from "../utils/Cache";
 import { NodeOptions, PlayerOptions } from "../utils/Interfaces";
 import { VoiceChannel } from "discord.js";
-const states: Map<string, any> = new Map();
+const states: Map<string, any> = new Map<string, any>();
 
-class LavaClient extends EventEmitter {
+export class LavaClient extends EventEmitter {
   /**
    * The discord client
    */
@@ -23,11 +22,11 @@ class LavaClient extends EventEmitter {
   /**
    * Collection of nodes of the client
    */
-  public readonly nodeCollection: Map<string, LavaNode>;
+  public readonly nodeCollection: Cache<string, LavaNode>;
   /**
    * Collection of players of the client
    */
-  public readonly playerCollection: Map<string, Player>;
+  public readonly playerCollection: Cache<string, Player>;
 
   /**
    * Emitted when a node is connected
@@ -62,6 +61,11 @@ class LavaClient extends EventEmitter {
    * @param {Player} player - The destroyed player.
    */
   /**
+   * Emitted when a queue ends
+   * @event LavaClient#queueOver
+   * @param {Player} player - Player whose queue ended.
+   */
+  /**
    * Emitted when a track ends
    * @event LavaClient#trackOver
    * @param {Track} track - The track which ended.
@@ -87,16 +91,12 @@ class LavaClient extends EventEmitter {
    * @param {Player} player - Player which was playing the track.
    * @param {Error} error - The error message.
    */
-  /**
-   * Emitted when a queue ends
-   * @event LavaClient#queueOver
-   * @param {Player} player - Player whose queue ended.
-   */
 
   /**
    * Creates a new LavaJSClient class instance
    * @param {*} client - The Discord client.
    * @param {Array<NodeOptions>} node - The LavaNode to use.
+   * @extends EventEmitter
    */
   public constructor(client: any, node: NodeOptions[]) {
     super();
@@ -105,8 +105,8 @@ class LavaClient extends EventEmitter {
     this.nodeOptions = node;
     this.shards = client.ws.shards.size;
 
-    this.nodeCollection = new Map();
-    this.playerCollection = new Map();
+    this.nodeCollection = new Cache();
+    this.playerCollection = new Cache();
 
     if (!this.nodeOptions || !this.nodeOptions.length)
       throw new Error("[ClientError] No nodes provided!");
@@ -154,7 +154,9 @@ class LavaClient extends EventEmitter {
         `LavaClient#spawnPlayer() Could not resolve PlayerOptions.textChannel.`
       );
 
-    const oldPlayer: Player = this.playerCollection.get(options.guild.id);
+    const oldPlayer: Player | undefined = this.playerCollection.get(
+      options.guild.id
+    );
     if (oldPlayer) return oldPlayer;
 
     return new Player(this, options, this.optimisedNode);
@@ -165,8 +167,8 @@ class LavaClient extends EventEmitter {
    * @return {LavaNode}
    */
   public get optimisedNode(): LavaNode {
-    const toArray: LavaNode[] = [...this.nodeCollection.values()];
-    const sorted: LavaNode[] = toArray
+    const sorted: LavaNode[] = this.nodeCollection
+      .toArray()
       .filter((x) => x.online)
       .sort((a, b) => {
         const loadA = (a.stats.cpu.systemLoad / a.stats.cpu.cores) * 100;
@@ -184,7 +186,9 @@ class LavaClient extends EventEmitter {
     if (!["VOICE_STATE_UPDATE", "VOICE_SERVER_UPDATE"].includes(data.t)) return;
     if (data.d.user_id && data.d.user_id !== this.client.user.id) return;
 
-    const player: Player = this.playerCollection.get(data.d.guild_id);
+    const player: Player | undefined = this.playerCollection.get(
+      data.d.guild_id
+    );
     if (!player) return;
     const voiceState: any = states.get(data.d.guild_id) || {};
 
@@ -220,5 +224,3 @@ class LavaClient extends EventEmitter {
     }
   }
 }
-
-export { LavaClient };

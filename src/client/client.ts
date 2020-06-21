@@ -11,9 +11,12 @@ export default class DiscordClient extends Client {
   
   // LavaClient
   private _LavaClient: any;
-  InfoEmbed: (channel: any, message: string) => Message;
-  SuccessEmbed: (channel: any, message: string) => Message;
-  ErrorEmbed: (channel: any, message: string) => Message;
+  private _lavaJS: any;
+
+  // Messages
+  InfoEmbed: ((channel: any, message: string) => Message) | undefined;
+  SuccessEmbed: ((channel: any, message: string) => Message) | undefined;
+  ErrorEmbed: ((channel: any, message: string) => Message) | undefined;
 
   constructor(options?: ClientOptions) {
     super(options);
@@ -26,11 +29,13 @@ export default class DiscordClient extends Client {
 
   // LavaClient
   get LavaClient(): any { return this._LavaClient; }
+  get lavaJS(): any { return this._lavaJS; }
 
   set prefix(prefix: string) { this._prefix = prefix; }
 
   // LavaClient
   set LavaClient(LavaClient: any) { this._LavaClient = LavaClient; }
+  set lavaJS(lavaJS: any) { this._lavaJS = lavaJS; }
 
 
 }

@@ -1,11 +1,9 @@
-"use strict";
-
 import WebSocket from "ws";
 import { LavaClient } from "./LavaClient";
-import { NodeOptions, NodeStats, Track } from "../utils/Interfaces";
 import { Player } from "./Player";
+import { NodeOptions, NodeStats, Track } from "../utils/Interfaces";
 
-class LavaNode {
+export class LavaNode {
   public readonly lavaJS: LavaClient;
   /**
    * The options for the node
@@ -22,11 +20,11 @@ class LavaNode {
   /**
    * The websocket connection
    */
-  public con: WebSocket;
+  public con!: WebSocket | null;
   /**
    * Handles the reconnect
    */
-  private reconnectModule: NodeJS.Timeout;
+  private reconnectModule: NodeJS.Timeout | undefined;
 
   /**
    * Create new LavaNode class instance
@@ -147,7 +145,7 @@ class LavaNode {
         );
         return this.kill();
       }
-      this.con.removeAllListeners();
+      this.con!.removeAllListeners();
       this.con = null;
       this.lavaJS.emit("nodeReconnect", this);
       this.connect();
@@ -160,8 +158,8 @@ class LavaNode {
    */
   public kill(): void {
     if (!this.online) return;
-    this.con.close(1000, "destroy");
-    this.con.removeAllListeners();
+    this.con!.close(1000, "destroy");
+    this.con!.removeAllListeners();
     this.con = null;
     this.lavaJS.nodeCollection.delete(this.options.host);
   }
@@ -173,6 +171,7 @@ class LavaNode {
     const msg: any = JSON.parse(data.toString());
     const { op, type, code, guildId, state } = msg;
     if (!op) return;
+
     if (op !== "event") {
       // Handle non-track event messages
       switch (op) {
@@ -182,17 +181,20 @@ class LavaNode {
           break;
 
         case "playerUpdate":
-          const player: Player = this.lavaJS.playerCollection.get(guildId);
+          const player: Player | undefined = this.lavaJS.playerCollection.get(
+            guildId
+          );
           if (player) player.position = state.position || 0;
-          this.lavaJS.emit("playerUpdate", player);
           break;
       }
     } else if (op === "event") {
       if (!guildId) return;
-      const player: Player = this.lavaJS.playerCollection.get(guildId);
+      const player: Player | undefined = this.lavaJS.playerCollection.get(
+        guildId
+      );
       if (!player) return;
       player.playState = false;
-      const track: Track = player.queue[0];
+      const track: Track = player.queue.first;
 
       // Handle track event messages
       switch (type) {
@@ -206,7 +208,7 @@ class LavaNode {
           if (track && player.repeatTrack) {
             player.play();
           } else if (track && player.repeatQueue) {
-            const toAdd: Track = player.queue.remove();
+            const toAdd: Track | undefined = player.queue.remove();
             if (toAdd) player.queue.add(toAdd);
             player.play();
           } else if (track && player.queue.size > 1) {
@@ -269,11 +271,9 @@ class LavaNode {
       if (!formattedData || !formattedData.startsWith("{"))
         rej(`The data was not in the proper format.`);
 
-      this.con.send(formattedData, (err) => {
+      this.con!.send(formattedData, (err) => {
         err ? rej(err) : res(true);
       });
     });
   }
 }
-
-export { LavaNode };

@@ -1,5 +1,3 @@
-
-import { Channel } from 'discord.js';
 import DiscordClient from '../client/client';
 
 export = (client: DiscordClient) => {
