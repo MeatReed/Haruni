@@ -7,9 +7,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --exec ts-node src/bot.ts && cd src/dashboard nuxt-ts",
     "start": "node ./build/bot.js",
-    "build": "tsc --build",
+    "build": "nuxt-ts build src/dashboard && tsc --build",
     "nuxt:build": "nuxt-ts build src/dashboard",
-    "nuxt:start": "nuxt-ts start src/dashboard"
+    "nuxt:start": "nuxt-ts start src/dashboard",
+    "copy": "cpx -v -u \"src/dashboard/.nuxt/**\" \"build/.nuxt\" && cpx -v -u \"src/dashboard/nuxt.config.js\" \"build/dashboard\" && cpx -v -u \".env\" \"build\""
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,8 @@
     "@types/node": "^14.0.13",
     "@types/node-fetch": "^2.5.7",
     "@types/ws": "^7.2.5",
+    "cpx": "^1.5.0",
+    "discord-paginationembed": "https://github.com/MeatReed/discord-paginationembed",
     "discord.js": "https://github.com/MeatReed/discord.js",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",

@@ -1,11 +1,11 @@
-import { Message, MessageCollector, TextChannel, DMChannel } from 'discord.js';
+import { Message, MessageCollector } from 'discord.js';
 import BaseCommand from '../../utils/structures/BaseCommand';
 import DiscordClient from '../../client/client';
-import { Track } from '../../utils/modules/lavajs/src/utils/Interfaces';
+import { Track, Utils } from '../../utils/modules/lavajs/src/index';
 
-export default class TestCommand extends BaseCommand {
+export default class PlayCommand extends BaseCommand {
   constructor() {
-    super('play', 'test', []);
+    super('play', 'music', []);
   }
 
   async run(client: DiscordClient, message: Message, args: Array<string>) {
@@ -35,6 +35,14 @@ export default class TestCommand extends BaseCommand {
           message.channel,
           `The bot has successfully joined the voice channel **${message.member.voice.channel.toString()}**`
         )
+      }
+    } else {
+      if (message.guild.me.voice.channel.id !== message.member.voice.channel.id) {
+        client.InfoEmbed(
+          message.channel,
+          "You're not in the same voice channel as bot!"
+        )
+        return
       }
     }
     const player = client.LavaClient.playerCollection.get(message.guild.id)
@@ -148,7 +156,7 @@ export default class TestCommand extends BaseCommand {
             },
             {
               name: 'Duration',
-              value: client.LavaClient.formatTime(song.length),
+              value: Utils.formatTime(song.length),
             },
           ],
         },
