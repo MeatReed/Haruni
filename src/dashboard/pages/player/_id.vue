@@ -293,6 +293,9 @@
           <v-btn color="primary" text @click="setFiltersDefault">
             Default
           </v-btn>
+          <v-btn color="primary" text @click="setNightcore">
+            NightCore
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn color="primary" text @click="saveFilters">
             Save
@@ -473,11 +476,13 @@ export default {
       this.volume = data.volume
     })
     this.socket.on('errorMessage', (data) => {
+      this.searchLoading = false
       this.snackbarText = data
       this.snackbarColor = 'error'
       this.snackbar = true
     })
     this.socket.on('successMessage', (data) => {
+      this.searchLoading = false
       this.snackbarText = data
       this.snackbarColor = 'success'
       this.snackbar = true
@@ -578,6 +583,29 @@ export default {
         musicNumber: this.selectMusic.index,
       })
       this.dialogMusic = false
+    },
+    setNightcore() {
+      this.socket.emit('sendFilters', {
+        guildID: this.$route.params.id,
+        user: this.$store.state.user,
+        send: {
+          equalizer: null,
+          /* karaoke: null, */
+          timescale: {
+            speed: 1.1,
+            pitch: 1.3,
+            rate: 1,
+          },
+          tremolo: null,
+        },
+      })
+      this.valueGain = 0
+      this.valueBands = 0
+      this.valueSpeedTimescale = 1.1
+      this.valuePitchTimescale = 1.3
+      this.valueRateTimescale = 1
+      this.valueFrequencyTremolo = 0
+      this.valueDepthTremolo = 0.1
     },
     setFiltersDefault() {
       this.socket.emit('sendFilters', {
