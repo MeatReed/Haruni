@@ -28,7 +28,7 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: [{ src: '~/plugins/VueDiscordMessage', mode: 'client', ssr: false }],
+  plugins: [],
   /*
    ** Nuxt.js dev-modules
    */

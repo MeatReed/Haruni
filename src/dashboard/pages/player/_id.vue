@@ -592,7 +592,7 @@ export default {
           equalizer: null,
           /* karaoke: null, */
           timescale: {
-            speed: 1.1,
+            speed: 1.2,
             pitch: 1.3,
             rate: 1,
           },
@@ -601,7 +601,7 @@ export default {
       })
       this.valueGain = 0
       this.valueBands = 0
-      this.valueSpeedTimescale = 1.1
+      this.valueSpeedTimescale = 1.2
       this.valuePitchTimescale = 1.3
       this.valueRateTimescale = 1
       this.valueFrequencyTremolo = 0
