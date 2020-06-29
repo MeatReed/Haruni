@@ -53,13 +53,7 @@
         <v-btn v-if="!player" color="success" @click="connect"
           >Connect the bot</v-btn
         >
-        <v-btn
-          v-if="player"
-          :disabled="!player.queue[0]"
-          fab
-          small
-          @click="dialogEQ = true"
-        >
+        <v-btn v-if="player" fab small @click="dialogEQ = true">
           EQ
         </v-btn>
         <v-btn-toggle dense>
@@ -91,23 +85,11 @@
             @click="skip"
             >Skip</v-btn
           >
-          <v-btn
-            v-if="player"
-            color="success"
-            :disabled="!player.queue[0]"
-            @click="stop"
-            >Stop</v-btn
-          >
+          <v-btn v-if="player" color="success" @click="stop">Stop</v-btn>
         </v-btn-toggle>
         <v-menu v-if="player" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              small
-              fab
-              :disabled="!player.queue[0]"
-              v-bind="attrs"
-              v-on="on"
-            >
+            <v-btn small fab v-bind="attrs" v-on="on">
               <v-icon dark>mdi-volume-high</v-icon>
             </v-btn>
           </template>
