@@ -22,9 +22,14 @@
 .image8-mode {
   --bgimg: url('./images/wallpaper/8.jpg')
 }
+.image9-mode {
+  --bgimg: url('./images/wallpaper/9.jpg')
+}
+
 
 .v-application {
   background-image: var(--bgimg) !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
+  background-size: cover !important;
 }

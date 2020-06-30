@@ -2,8 +2,9 @@
   <v-container>
     <h1>Appearance</h1>
     <v-row>
-      <v-col v-for="(item, index) of items" :key="index" class="text-center">
+      <v-col v-for="(item, index) of items" :key="index">
         <v-card
+          v-if="item"
           class="mx-auto"
           color="transparent"
           width="244"
@@ -11,6 +12,19 @@
           @click="$colorMode.preference = `image${index + 1}`"
         >
           <v-img class="white--text align-end" :src="item" />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col class="text-center">
+        <v-card
+          class="mx-auto"
+          color="transparent"
+          width="244"
+          outlined
+          @click="$colorMode.preference = `dark`"
+        >
+          <h1>DARK</h1>
         </v-card>
       </v-col>
     </v-row>
@@ -31,6 +45,7 @@ export default {
         require('~/assets/images/wallpaper/6.png'),
         require('~/assets/images/wallpaper/7.png'),
         require('~/assets/images/wallpaper/8.jpg'),
+        require('~/assets/images/wallpaper/9.jpg'),
       ],
     }
   },
