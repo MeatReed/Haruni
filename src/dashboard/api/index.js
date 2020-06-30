@@ -27,6 +27,19 @@ router.get('/guild/:guildID', (req, res) => {
   }
 })
 
+router.get('/botinfo', (req, res) => {
+  if (req.client.user) {
+    return res.json({
+      user: req.client.user,
+      guildCount: req.client.guilds.cache.size,
+    })
+  } else {
+    return res.status(400).json({
+      error: 'Error',
+    })
+  }
+})
+
 export default {
   path: '/api',
   handler: router,

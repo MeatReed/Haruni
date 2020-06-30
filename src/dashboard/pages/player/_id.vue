@@ -53,7 +53,13 @@
         <v-btn v-if="!player" color="success" @click="connect"
           >Connect the bot</v-btn
         >
-        <v-btn v-if="player" fab small @click="dialogEQ = true">
+        <v-btn
+          v-if="player"
+          fab
+          small
+          color="transparent"
+          @click="dialogEQ = true"
+        >
           EQ
         </v-btn>
         <v-btn-toggle dense>
@@ -89,11 +95,11 @@
         </v-btn-toggle>
         <v-menu v-if="player" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn small fab v-bind="attrs" v-on="on">
-              <v-icon dark>mdi-volume-high</v-icon>
+            <v-btn small fab v-bind="attrs" color="transparent" v-on="on">
+              <v-icon>mdi-volume-high</v-icon>
             </v-btn>
           </template>
-          <v-card>
+          <v-card color="transparent">
             <v-slider v-model="volume" vertical @end="setVolume" />
           </v-card>
         </v-menu>
@@ -103,6 +109,7 @@
       <v-col>
         <h3>Queue</h3>
         <v-data-table
+          color="transparent"
           :headers="headersQueue"
           :items="player.queue.slice(1)"
           disable-filtering
@@ -119,7 +126,7 @@
       </v-snackbar>
     </div>
     <v-dialog v-if="selectMusic" v-model="dialogMusic" width="500">
-      <v-card>
+      <v-card color="transparent">
         <v-img :src="selectMusic.info.thumbnail.max" />
         <v-card-title>
           {{ selectMusic.info.title }}
@@ -147,7 +154,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogEQ" width="800">
-      <v-card>
+      <v-card color="transparent">
         <v-card-title>
           Filters
         </v-card-title>
@@ -156,7 +163,12 @@
             Changes can take time.
           </v-alert>
         </v-card-text>
-        <v-tabs v-model="filtersModel" centered slider-color="yellow">
+        <v-tabs
+          v-model="filtersModel"
+          centered
+          slider-color="yellow"
+          background-color="transparent"
+        >
           <v-tab :href="`#tab-equalizer`">
             Equalizer
           </v-tab>
@@ -171,7 +183,7 @@
           </v-tab>
         </v-tabs>
         <v-card-text>
-          <v-tabs-items v-model="filtersModel">
+          <v-tabs-items v-model="filtersModel" color="transparent">
             <v-tab-item value="tab-equalizer">
               <v-slider
                 v-model="valueBands"
@@ -289,7 +301,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogAddMusic" width="500">
-      <v-card>
+      <v-card color="transparent">
         <v-card-title>
           Add a music
         </v-card-title>
@@ -308,7 +320,7 @@
               <v-text-field v-model="lavaSearchInput"></v-text-field>
             </v-col>
           </v-row>
-          <v-list v-if="listTracks">
+          <v-list v-if="listTracks.tracks" color="transparent">
             <v-list-item-group v-model="selectItemVideo" color="primary">
               <v-list-item v-for="(item, i) in listTracks.tracks" :key="i">
                 <v-list-item-content>

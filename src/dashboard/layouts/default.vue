@@ -1,6 +1,12 @@
 <template>
-  <v-app dark>
-    <v-navigation-drawer v-model="drawer" :clipped="clipped" fixed app>
+  <v-app>
+    <v-navigation-drawer
+      v-model="drawer"
+      :clipped="clipped"
+      fixed
+      app
+      color="transparent"
+    >
       <v-list>
         <v-list-item
           v-for="(item, i) in items"
@@ -17,26 +23,22 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
-      <template v-slot:append>
-        <div class="pa-2">
-          <v-btn
-            block
-            :color="$vuetify.theme.dark ? 'black' : 'white'"
-            @click="$vuetify.theme.dark = $vuetify.theme.dark ? false : true"
-            ><v-icon :color="$vuetify.theme.dark ? 'white' : 'black'"
-              >mdi-white-balance-sunny</v-icon
-            ></v-btn
-          >
-        </div>
-      </template>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" fixed app>
+    <v-app-bar
+      :clipped-left="clipped"
+      fixed
+      app
+      dense
+      flat
+      collapse-on-scroll
+      color="transparent"
+    >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title v-text="title" />
       <v-spacer />
     </v-app-bar>
     <v-main>
-      <nuxt />
+      <nuxt keep-alive />
     </v-main>
     <v-footer fixed app>
       <span>&copy; {{ new Date().getFullYear() }}</span>
@@ -67,3 +69,28 @@ export default {
   },
 }
 </script>
+
+<style>
+.v-application .transparent {
+  background-color: rgba(0, 0, 0, 0.41) !important;
+}
+.v-card.transparent {
+  background-color: rgba(0, 0, 0, 0.41) !important;
+}
+
+.theme--dark.v-tabs-items {
+  background-color: rgba(0, 0, 0, 0) !important;
+}
+
+.theme--dark.v-data-table {
+  background-color: rgba(0, 0, 0, 0.41) !important;
+}
+
+.theme--dark.v-data-table
+  > .v-data-table__wrapper
+  > table
+  > tbody
+  > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+</style>

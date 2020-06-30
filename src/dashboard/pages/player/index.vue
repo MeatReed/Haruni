@@ -15,6 +15,7 @@
           <v-card
             class="mx-auto"
             :elevation="hover ? 24 : 2"
+            color="transparent"
             width="244"
             outlined
             nuxt

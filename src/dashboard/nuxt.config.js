@@ -24,7 +24,7 @@ module.exports = {
   /*
    ** Global CSS
    */
-  css: [],
+  css: ['@/assets/main.css'],
   /*
    ** Plugins to load before mounting the App
    */
@@ -36,7 +36,21 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
+    '@nuxtjs/color-mode',
   ],
+  colorMode: {
+    preference: 'system', // default value of $colorMode.preference
+    fallback: 'light', // fallback value if not system preference found
+    hid: 'nuxt-color-mode-script',
+    globalName: '__NUXT_COLOR_MODE__',
+    componentName: 'ColorScheme',
+    cookie: {
+      key: 'nuxt-color-mode',
+      options: {
+        path: process.env.BASE_URL, // https://nuxtjs.org/api/configuration-router#base
+      },
+    },
+  },
   /*
    ** Nuxt.js modules
    */
