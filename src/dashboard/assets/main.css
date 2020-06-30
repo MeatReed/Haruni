@@ -1,35 +1,82 @@
-.image1-mode {
+:root {
+  --bgcolor: #121212
+}
+/* Wallpaper Image */
+.wallpaper1-mode {
   --bgimg: url('./images/wallpaper/1.jpg');
 }
-.image2-mode {
+.wallpaper2-mode {
   --bgimg: url('./images/wallpaper/2.png');
 }
-.image3-mode {
+.wallpaper3-mode {
   --bgimg: url('./images/wallpaper/3.jpg');
 }
-.image4-mode {
+.wallpaper4-mode {
   --bgimg: url('./images/wallpaper/4.png');
 }
-.image5-mode {
+.wallpaper5-mode {
   --bgimg: url('./images/wallpaper/5.png')
 }
-.image6-mode {
+.wallpaper6-mode {
   --bgimg: url('./images/wallpaper/6.png')
 }
-.image7-mode {
+.wallpaper7-mode {
   --bgimg: url('./images/wallpaper/7.png')
 }
-.image8-mode {
+.wallpaper8-mode {
   --bgimg: url('./images/wallpaper/8.jpg')
 }
-.image9-mode {
+.wallpaper9-mode {
   --bgimg: url('./images/wallpaper/9.jpg')
 }
+.wallpaper10-mode {
+  --bgimg: url('./images/wallpaper/10.jpg')
+}
+.wallpaper11-mode {
+  --bgimg: url('./images/wallpaper/11.jpg')
+}
+.wallpaper12-mode {
+  --bgimg: url('./images/wallpaper/12.jpg')
+}
+.wallpaper13-mode {
+  --bgimg: url('./images/wallpaper/13.jpg')
+}
+
+/* Blue Image */
+.blur1-mode {
+  --bgimg: url('./images/blur/1.jpg')
+}
+.blur2-mode {
+  --bgimg: url('./images/blur/2.jpg')
+}
+.blur3-mode {
+  --bgimg: url('./images/blur/3.jpg')
+}
+.blur4-mode {
+  --bgimg: url('./images/blur/4.jpg')
+}
+
+/* Color */
 .dark-mode {
   --bgcolor: #121212
 }
 .light-mode {
   --bgcolor: #cacaca
+}
+.blue-mode {
+  --bgcolor: #7795c1
+}
+.pink-mode {
+  --bgcolor: #b774a3
+}
+.green-mode {
+  --bgcolor: #6b954b
+}
+.purple-mode {
+  --bgcolor: #6c4b95
+}
+.yellow-mode {
+  --bgcolor: #d0c26a
 }
 
 
