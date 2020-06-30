@@ -23,6 +23,13 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <template v-slot:append>
+        <div class="pa-2">
+          <v-btn block color="transparent" nuxt to="/appearance"
+            >Appearance</v-btn
+          >
+        </div>
+      </template>
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"
@@ -40,7 +47,7 @@
     <v-main>
       <nuxt keep-alive />
     </v-main>
-    <v-footer fixed app>
+    <v-footer fixed app color="transparent">
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -92,5 +99,9 @@ export default {
   > tbody
   > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
   background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.v-item-group.theme--dark.v-slide-group.v-tabs-bar.v-tabs-bar--is-mobile.primary--text.transparent {
+  background-color: rgba(0, 0, 0, 0) !important;
 }
 </style>

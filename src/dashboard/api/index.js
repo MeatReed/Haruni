@@ -32,6 +32,10 @@ router.get('/botinfo', (req, res) => {
     return res.json({
       user: req.client.user,
       guildCount: req.client.guilds.cache.size,
+      avatar: req.client.user.avatarURL({
+        format: 'png',
+        size: 2048,
+      }),
     })
   } else {
     return res.status(400).json({

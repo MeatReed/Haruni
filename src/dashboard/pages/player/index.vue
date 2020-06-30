@@ -11,29 +11,26 @@
         :key="index"
         class="text-center"
       >
-        <v-hover v-slot:default="{ hover }" open-delay="200" aria-disabled>
-          <v-card
-            class="mx-auto"
-            :elevation="hover ? 24 : 2"
-            color="transparent"
-            width="244"
-            outlined
-            nuxt
-            :to="'/player/' + item.id"
-          >
-            <v-img
-              class="white--text align-end"
-              :src="
-                item.icon
-                  ? `https://cdn.discordapp.com/icons/${item.id}/${item.icon}.png`
-                  : 'https://discordapp.com/assets/6debd47ed13483642cf09e832ed0bc1b.png'
-              "
-            />
-            <v-card-title>
-              {{ item.name }}
-            </v-card-title>
-          </v-card>
-        </v-hover>
+        <v-card
+          class="mx-auto"
+          color="transparent"
+          width="244"
+          outlined
+          nuxt
+          :to="'/player/' + item.id"
+        >
+          <v-img
+            class="white--text align-end"
+            :src="
+              item.icon
+                ? `https://cdn.discordapp.com/icons/${item.id}/${item.icon}.png`
+                : 'https://discordapp.com/assets/6debd47ed13483642cf09e832ed0bc1b.png'
+            "
+          />
+          <v-card-title>
+            {{ item.name }}
+          </v-card-title>
+        </v-card>
       </v-col>
     </v-row>
     <dialogLogin />

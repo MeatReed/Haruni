@@ -25,29 +25,6 @@
         <v-card height="150" color="transparent">
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
-              <v-card-title class="headline">Invite the bot</v-card-title>
-
-              <v-card-subtitle
-                >You haven't invited the bot?<br />test test</v-card-subtitle
-              >
-              <v-card-actions>
-                <v-btn text>Invite now</v-btn>
-              </v-card-actions>
-            </div>
-
-            <v-avatar class="ma-3" size="125">
-              <v-img
-                v-if="!$fetchState.pending"
-                :src="botinfo.user.avatarURL"
-              />
-            </v-avatar>
-          </div>
-        </v-card>
-      </v-col>
-      <v-col xl="4" lg="4" md="12" sm="12" xs="12">
-        <v-card height="150" color="transparent">
-          <div class="d-flex flex-no-wrap justify-space-between">
-            <div>
               <v-card-title class="headline">Servers</v-card-title>
 
               <h1 v-if="!$fetchState.pending" class="ml-4">
@@ -60,14 +37,31 @@
           </div>
         </v-card>
       </v-col>
+      <v-col xl="4" lg="4" md="12" sm="12" xs="12">
+        <v-card height="150" color="transparent">
+          <div class="d-flex flex-no-wrap justify-space-between">
+            <div>
+              <v-card-title class="headline">Invite the bot</v-card-title>
+
+              <v-card-subtitle
+                >You haven't invited the bot?<br />test test</v-card-subtitle
+              >
+              <v-card-actions>
+                <v-btn text>Invite now</v-btn>
+              </v-card-actions>
+            </div>
+
+            <v-avatar class="ma-3" size="125">
+              <v-img v-if="!$fetchState.pending" :src="botinfo.avatar" />
+            </v-avatar>
+          </div>
+        </v-card>
+      </v-col>
     </v-row>
     <v-row>
       <v-col class="text-center">
         <v-avatar size="250">
-          <img
-            src="https://cdn.discordapp.com/avatars/722181826545713313/593530d4de2fda3e41ac6937fd9c7733.png?size=1280"
-            alt=""
-          />
+          <v-img v-if="!$fetchState.pending" :src="botinfo.avatar" alt="" />
         </v-avatar>
         <p class="font-weight-medium">
           Haruni is a Discord bot specializing in music! It has an online player
@@ -90,10 +84,10 @@
             <v-btn href="/support" color="transparent">Support</v-btn>
           </v-col>
         </v-row>
-        <v-img src="https://i.imgur.com/xfMHmTW.png" />
+        <v-img :src="require('~/assets/images/discord1.png')" />
       </v-col>
       <v-col>
-        <v-img src="https://i.imgur.com/ASLLusj.png" />
+        <v-img :src="require('~/assets/images/discord2.png')" />
       </v-col>
     </v-row>
   </v-container>
@@ -112,20 +106,6 @@ export default {
   data() {
     return {
       botinfo: null,
-      items: [
-        {
-          src: 'https://i.imgur.com/Jq234oB.png',
-        },
-        {
-          src: 'https://i.imgur.com/zEoWg0a.png',
-        },
-        {
-          src: 'https://i.imgur.com/TMYPFfp.png',
-        },
-        {
-          src: 'https://i.imgur.com/NAYETN2.png',
-        },
-      ],
     }
   },
 }

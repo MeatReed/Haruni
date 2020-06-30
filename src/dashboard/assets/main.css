@@ -1,5 +1,30 @@
+.image1-mode {
+  --bgimg: url('./images/wallpaper/1.jpg');
+}
+.image2-mode {
+  --bgimg: url('./images/wallpaper/2.png');
+}
+.image3-mode {
+  --bgimg: url('./images/wallpaper/3.jpg');
+}
+.image4-mode {
+  --bgimg: url('./images/wallpaper/4.png');
+}
+.image5-mode {
+  --bgimg: url('./images/wallpaper/5.png')
+}
+.image6-mode {
+  --bgimg: url('./images/wallpaper/6.png')
+}
+.image7-mode {
+  --bgimg: url('./images/wallpaper/7.png')
+}
+.image8-mode {
+  --bgimg: url('./images/wallpaper/8.jpg')
+}
+
 .v-application {
-  background-image: url('https://cdn.nekos.life/wallpaper/0o44GDVaHSw.jpg') !important;
+  background-image: var(--bgimg) !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
 }
