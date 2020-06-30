@@ -27,6 +27,17 @@
           <h1>DARK</h1>
         </v-card>
       </v-col>
+      <v-col class="text-center">
+        <v-card
+          class="mx-auto"
+          color="transparent"
+          width="244"
+          outlined
+          @click="$colorMode.preference = `light`"
+        >
+          <h1>LIGHT</h1>
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>

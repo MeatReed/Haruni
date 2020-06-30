@@ -25,10 +25,17 @@
 .image9-mode {
   --bgimg: url('./images/wallpaper/9.jpg')
 }
+.dark-mode {
+  --bgcolor: #121212
+}
+.light-mode {
+  --bgcolor: #cacaca
+}
 
 
 .v-application {
   background-image: var(--bgimg) !important;
+  background-color: var(--bgcolor) !important;
   background-repeat: no-repeat !important;
   background-attachment: fixed !important;
   background-size: cover !important;
