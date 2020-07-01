@@ -1,4 +1,5 @@
 module.exports = {
+  components: true,
   mode: 'universal',
   /*
    ** Headers of the page
@@ -43,8 +44,8 @@ module.exports = {
     optimizeImages: true,
   },
   colorMode: {
-    preference: 'system', // default value of $colorMode.preference
-    fallback: 'light', // fallback value if not system preference found
+    preference: 'dark', // default value of $colorMode.preference
+    fallback: 'blue', // fallback value if not system preference found
     hid: 'nuxt-color-mode-script',
     globalName: '__NUXT_COLOR_MODE__',
     componentName: 'ColorScheme',

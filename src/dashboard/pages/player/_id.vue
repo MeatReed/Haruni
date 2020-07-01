@@ -53,13 +53,7 @@
         <v-btn v-if="!player" color="success" @click="connect"
           >Connect the bot</v-btn
         >
-        <v-btn
-          v-if="player"
-          fab
-          small
-          color="transparent"
-          @click="dialogEQ = true"
-        >
+        <v-btn v-if="player" fab small outlined @click="dialogEQ = true">
           EQ
         </v-btn>
         <v-btn-toggle dense>
@@ -95,11 +89,11 @@
         </v-btn-toggle>
         <v-menu v-if="player" offset-y>
           <template v-slot:activator="{ on, attrs }">
-            <v-btn small fab v-bind="attrs" color="transparent" v-on="on">
+            <v-btn small fab v-bind="attrs" outlined v-on="on">
               <v-icon>mdi-volume-high</v-icon>
             </v-btn>
           </template>
-          <v-card color="transparent">
+          <v-card color="transparent" outlined>
             <v-slider v-model="volume" vertical @end="setVolume" />
           </v-card>
         </v-menu>
@@ -126,7 +120,7 @@
       </v-snackbar>
     </div>
     <v-dialog v-if="selectMusic" v-model="dialogMusic" width="500">
-      <v-card color="transparent">
+      <v-card color="transparent" outlined>
         <v-img :src="selectMusic.info.thumbnail.max" />
         <v-card-title>
           {{ selectMusic.info.title }}
@@ -154,7 +148,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogEQ" width="800">
-      <v-card color="transparent">
+      <v-card color="transparent" outlined>
         <v-card-title>
           Filters
         </v-card-title>
@@ -301,7 +295,7 @@
       </v-card>
     </v-dialog>
     <v-dialog v-model="dialogAddMusic" width="500">
-      <v-card color="transparent">
+      <v-card color="transparent" outlined>
         <v-card-title>
           Add a music
         </v-card-title>

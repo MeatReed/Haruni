@@ -75,6 +75,9 @@ module.exports = async (client) => {
   app.get('/callback', passport.authenticate('discord'), (req, res) => {
     res.redirect('/player')
   })
+  app.get('/support', (req, res) => {
+    res.redirect('https://discord.gg/RBRqCyg')
+  })
 
   // Init Nuxt.js
   const nuxt = new Nuxt(config)

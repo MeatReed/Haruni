@@ -1,6 +1,6 @@
 <template>
   <v-dialog :value="!this.$store.state.user" persistent width="500">
-    <v-card color="transparent">
+    <v-card color="transparent" outlined>
       <v-card-title>
         Login
       </v-card-title>
