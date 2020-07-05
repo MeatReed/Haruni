@@ -2,13 +2,13 @@ const moment = require('moment')
 const { MessageCollector } = require('discord.js')
 const BaseCommand = require('../../utils/structures/BaseCommand')
 
-module.exports = class PlayCommand extends BaseCommand {
+module.exports = class PlaySoundCloudCommand extends BaseCommand {
   constructor() {
     super({
-      name: 'play',
+      name: 'playsc',
       description: '',
       category: 'music',
-      usage: 'play {url or name}',
+      usage: 'playsc {url or name}',
       enabled: true,
       guildOnly: true,
       nsfw: false,
@@ -49,7 +49,7 @@ module.exports = class PlayCommand extends BaseCommand {
     }
     const queue = player.queue
     const search = await player.lavaSearch(query, message.author, {
-      source: 'yt',
+      source: 'sc',
       add: false,
     })
     if (!search) {

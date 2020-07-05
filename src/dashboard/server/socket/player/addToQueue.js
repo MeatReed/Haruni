@@ -30,7 +30,10 @@ module.exports = (client, socket) => {
         {
           tag: `${data.user.username}#${data.user.discriminator}`,
         },
-        true
+        {
+          source: 'yt',
+          add: true,
+        }
       )
       if (songs[0].title) {
         if (!player.playing) {
@@ -44,6 +47,7 @@ module.exports = (client, socket) => {
       }
     } catch (error) {
       if (error) {
+        console.log(error)
         socket.emit('errorMessage', 'An error has occurred.')
       }
     }

@@ -23,7 +23,7 @@ module.exports = class SkipCommand extends BaseCommand {
       return
     }
     const player = client.lavaClient.playerCollection.get(message.guild.id)
-    if (!player || !player.queue[0]) {
+    if (!player || !player.playing || !player.queue[0]) {
       client.InfoEmbed(message.channel, "The bot doesn't currently play music.")
       return
     }

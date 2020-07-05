@@ -24,7 +24,7 @@ module.exports = class VolumeCommand extends BaseCommand {
       return
     }
     const player = client.lavaClient.playerCollection.get(message.guild.id)
-    if (!player || !player.queue[0]) {
+    if (!player || !player.playing || !player.queue[0]) {
       client.InfoEmbed(message.channel, "The bot doesn't currently play music.")
       return
     }
@@ -36,6 +36,11 @@ module.exports = class VolumeCommand extends BaseCommand {
       return
     }
     if (!volume) {
+      if (volume === 0) {
+        player.setVolume(volume)
+        client.SuccessEmbed(message.channel, `Volume at ${volume}%`)
+        return
+      }
       client.InfoEmbed(
         message.channel,
         `Volume is currently at ${player.volume}%`

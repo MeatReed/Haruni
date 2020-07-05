@@ -30,7 +30,10 @@ module.exports = (client, socket) => {
         {
           tag: `${data.user.username}#${data.user.discriminator}`,
         },
-        false
+        {
+          source: 'yt',
+          add: false,
+        }
       )
       if (songs) {
         socket.emit('searchSongs', songs)
