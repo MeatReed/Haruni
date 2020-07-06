@@ -16,6 +16,10 @@ module.exports = (client, socket) => {
       return
     }
     const member = guild.members.cache.get(data.user.id)
+    if (!member) {
+      socket.emit('errorMessage', "You're not on this server.")
+      return
+    }
     if (!member.voice.channel) {
       socket.emit('errorMessage', 'Please join a vocal channel!')
       return
@@ -24,17 +28,20 @@ module.exports = (client, socket) => {
       .get(process.env.DEFAULT_GUILD_ID)
       .channels.cache.get(process.env.DEFAULT_TEXTCHANNEL_ID)
     try {
-      if (!client.lavaClient.playerCollection.get(guildID)) {
-        client.lavaClient.spawnPlayer({
-          guild,
-          voiceChannel: member.voice.channel,
-          textChannel,
-          deafen: true,
-          trackRepeat: false,
-          queueRepeat: false,
-          skipOnError: true,
-        })
-      }
+      const player = client.lavaClient.spawnPlayer({
+        guild,
+        voiceChannel: member.voice.channel,
+        textChannel,
+        deafen: true,
+        trackRepeat: false,
+        queueRepeat: false,
+        skipOnError: true,
+      })
+      const playerCloned = Object.assign({}, player)
+      delete playerCloned.client
+      delete playerCloned.node
+      delete playerCloned.lavaJS
+      socket.emit('sendPlayer/' + player.options.guild.id, playerCloned)
     } catch (error) {
       if (error) {
         socket.emit('errorMessage', 'An error has occurred.')

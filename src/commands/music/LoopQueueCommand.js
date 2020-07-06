@@ -35,10 +35,10 @@ module.exports = class LoopQueueCommand extends BaseCommand {
       return
     }
     if (!player.repeatQueue) {
-      player.repeatQueue = true
+      player.toggleRepeat('queue')
       client.SuccessEmbed(message.channel, `Loop Queue activated.`)
     } else {
-      player.repeatQueue = false
+      player.toggleRepeat('queue')
       client.SuccessEmbed(message.channel, `Loop Queue off.`)
     }
   }

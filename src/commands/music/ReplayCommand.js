@@ -38,10 +38,10 @@ module.exports = class ReplayCommand extends BaseCommand {
       if (player.repeatTrack) {
         await player.stop()
       } else {
-        player.repeatTrack = true
+        player.toggleRepeat('track')
         await player.stop()
         setTimeout(() => {
-          player.repeatTrack = false
+          player.toggleRepeat('track')
         }, 1000)
       }
     } catch (error) {

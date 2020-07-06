@@ -35,13 +35,13 @@ module.exports = class LoopCommand extends BaseCommand {
       return
     }
     if (!player.repeatTrack) {
-      player.repeatTrack = true
+      player.toggleRepeat('track')
       client.SuccessEmbed(
         message.channel,
         `Loop activated, \`${player.queue[0].title}\` music will repeat.`
       )
     } else {
-      player.repeatTrack = false
+      player.toggleRepeat('track')
       client.SuccessEmbed(message.channel, `Loop off.`)
     }
   }

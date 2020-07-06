@@ -12,6 +12,22 @@ module.exports = (client, socket) => {
     if (!guild) {
       socket.emit('errorMessage', 'The guild does not exist.')
     }
+    const member = guild.members.cache.get(data.user.id)
+    if (!member) {
+      socket.emit('errorMessage', "You're not on this server.")
+      return
+    }
+    if (!member.voice.channel) {
+      socket.emit('errorMessage', 'Please join a vocal channel!')
+      return
+    }
+    if (guild.me.voice.channel.id !== member.voice.channel.id) {
+      socket.emit(
+        'errorMessage',
+        "You're not in the same voice channel as bot!"
+      )
+      return
+    }
     const player = client.lavaClient.playerCollection.get(guildID)
     if (!player) {
       socket.emit('errorMessage', 'The bot is not connected to a voiceChannel!')
